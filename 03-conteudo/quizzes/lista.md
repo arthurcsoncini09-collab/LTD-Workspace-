@@ -1,7 +1,8 @@
 # Quizzes
 
-- Quiz 01 - Redes básicas
-- Quiz 02 - Modelo OSI
-- Quiz 03 - IPv4 e subnetting
-- Quiz 04 - DNS e DHCP
-- Quiz 05 - TCP/UDP e ARP
+Cada módulo tem seu próprio quiz (5 a 7 questões com explicação), disponível no fim da aula e na
+página `/quizzes`. O Desafio Final traz a prova final com 20 questões cobrindo todo o curso.
+A melhor nota de cada módulo fica salva no progresso do aluno (localStorage do navegador).
+
+As questões são definidas no campo `quizQuestions` de cada arquivo em `lib/content/modules/`.
+A resposta (`answer`) precisa ser exatamente igual a uma das opções (`options`).

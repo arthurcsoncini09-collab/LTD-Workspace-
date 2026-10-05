@@ -1,0 +1,182 @@
+import type { ModuleSeed } from '../types';
+
+export const portasDeRede: ModuleSeed = {
+  slug: 'portas-de-rede',
+  title: 'Módulo 8 — Portas de Rede',
+  stage: 'Intermediário',
+  description: 'Portas e sockets, faixas de portas, as portas mais importantes, estados de porta e varredura ética.',
+  accent: 'from-amber-500 to-yellow-400',
+  objective: 'Entender como portas identificam aplicações, memorizar as portas mais usadas e verificar quais serviços estão expostos em um host.',
+  summary: 'O IP leva o pacote até o host; a porta leva os dados até a aplicação certa dentro dele. A combinação IP + porta + protocolo forma um socket.',
+  lessons: [
+    {
+      slug: 'portas-e-sockets',
+      title: 'Portas, sockets e faixas',
+      introduction: 'Uma porta é um número de 16 bits (0 a 65535) usado pelo TCP e pelo UDP para identificar processos. Um servidor web "escuta" na porta 443; seu navegador usa uma porta alta aleatória como origem.',
+      why_it_matters: 'Configurar firewalls, port forwarding, diagnosticar serviços e avaliar a superfície de ataque de um servidor exige saber quais portas estão abertas e por quê.',
+      real_world: 'Ao abrir duas abas do mesmo site, o navegador cria duas conexões com o mesmo IP e porta de destino (443), mas com portas de origem diferentes — é assim que as respostas voltam para a aba correta.',
+      explanation: 'Pense no IP como o endereço de um prédio e na porta como o número do apartamento. Um socket é a combinação IP:porta; uma conexão TCP é identificada pela quíntupla: protocolo, IP de origem, porta de origem, IP de destino, porta de destino.',
+      exercise: 'Quantas portas existem e em que faixas elas se dividem?',
+      exercise_answer: '65.536 portas (0–65535): bem conhecidas 0–1023, registradas 1024–49151 e dinâmicas/efêmeras 49152–65535.',
+      challenge: 'Abra três sites diferentes e use netstat/ss para identificar as portas de origem usadas pelo seu navegador.',
+      keywords: ['porta', 'socket', 'well-known', 'efêmera', 'quíntupla', 'IANA'],
+      sections: [
+        {
+          title: 'Faixas de portas (IANA)',
+          table: {
+            headers: ['Faixa', 'Nome', 'Uso'],
+            rows: [
+              ['0 – 1023', 'Bem conhecidas (well-known)', 'Serviços padrão; exigem privilégio de administrador para escutar em Linux'],
+              ['1024 – 49151', 'Registradas', 'Aplicações específicas (MySQL 3306, RDP 3389…)'],
+              ['49152 – 65535', 'Dinâmicas / efêmeras', 'Portas de origem temporárias dos clientes'],
+            ],
+          },
+        },
+        {
+          title: 'Socket e quíntupla',
+          code: 'Cliente 192.168.1.10:51544  ──TCP──>  Servidor 93.184.215.14:443\n\nQuíntupla: (TCP, 192.168.1.10, 51544, 93.184.215.14, 443)',
+        },
+      ],
+    },
+    {
+      slug: 'portas-essenciais',
+      title: 'Portas essenciais e estados de porta',
+      introduction: 'Algumas portas aparecem o tempo todo em provas, firewalls e logs. Memorizá-las agiliza muito o trabalho de quem administra redes.',
+      why_it_matters: 'Ao ver um alerta "tentativas de conexão na porta 3389", um analista precisa saber na hora que se trata de RDP — e que expô-lo na Internet é um risco sério.',
+      real_world: 'Varreduras automatizadas na Internet procuram constantemente portas como 22 (SSH), 23 (Telnet), 445 (SMB) e 3389 (RDP) abertas para tentar invasões.',
+      explanation: 'Uma porta pode estar aberta (há um serviço escutando e respondendo), fechada (o host responde com RST/ICMP, mas nada escuta) ou filtrada (um firewall descarta os pacotes e não há resposta).',
+      exercise: 'Quais são as portas de HTTP, HTTPS, SSH e DNS?',
+      exercise_answer: 'HTTP 80/TCP, HTTPS 443/TCP (e UDP para HTTP/3), SSH 22/TCP e DNS 53/UDP e TCP.',
+      challenge: 'Use nmap no seu próprio computador (localhost) e explique cada porta aberta que aparecer.',
+      keywords: ['HTTP', 'HTTPS', 'SSH', 'DNS', 'RDP', 'SMB', 'nmap', 'aberta', 'filtrada'],
+      sections: [
+        {
+          title: 'Portas que todo profissional deve saber',
+          table: {
+            headers: ['Porta', 'Protocolo', 'Serviço'],
+            rows: [
+              ['20, 21', 'TCP', 'FTP (dados, controle)'],
+              ['22', 'TCP', 'SSH / SFTP / SCP'],
+              ['23', 'TCP', 'Telnet (inseguro)'],
+              ['25', 'TCP', 'SMTP (envio entre servidores de e-mail)'],
+              ['53', 'UDP/TCP', 'DNS'],
+              ['67, 68', 'UDP', 'DHCP (servidor, cliente)'],
+              ['69', 'UDP', 'TFTP'],
+              ['80', 'TCP', 'HTTP'],
+              ['110', 'TCP', 'POP3'],
+              ['123', 'UDP', 'NTP'],
+              ['143', 'TCP', 'IMAP'],
+              ['161, 162', 'UDP', 'SNMP, SNMP traps'],
+              ['389 / 636', 'TCP', 'LDAP / LDAPS'],
+              ['443', 'TCP/UDP', 'HTTPS (UDP para HTTP/3)'],
+              ['445', 'TCP', 'SMB (compartilhamento Windows)'],
+              ['587', 'TCP', 'SMTP submission (envio de clientes)'],
+              ['993 / 995', 'TCP', 'IMAPS / POP3S'],
+              ['1194', 'UDP', 'OpenVPN'],
+              ['3306', 'TCP', 'MySQL'],
+              ['3389', 'TCP', 'RDP (área de trabalho remota)'],
+              ['5432', 'TCP', 'PostgreSQL'],
+              ['51820', 'UDP', 'WireGuard'],
+            ],
+          },
+        },
+        {
+          title: 'Estados de porta em uma varredura',
+          table: {
+            headers: ['Estado', 'O que acontece', 'Interpretação'],
+            rows: [
+              ['Aberta', 'Responde SYN-ACK (TCP) ou dados (UDP)', 'Há um serviço escutando'],
+              ['Fechada', 'Responde RST (TCP) ou ICMP port unreachable (UDP)', 'Host ativo, sem serviço'],
+              ['Filtrada', 'Sem resposta ou ICMP administratively prohibited', 'Firewall bloqueando'],
+            ],
+          },
+        },
+        {
+          title: 'Varredura ética',
+          content: 'Ferramentas como o nmap são usadas por administradores para auditar seus próprios sistemas. Varrer redes de terceiros sem autorização pode ser crime (no Brasil, a Lei 12.737/2012 tipifica a invasão de dispositivo informático). Pratique apenas em equipamentos seus ou em laboratórios autorizados.',
+        },
+      ],
+    },
+  ],
+  quizQuestions: [
+    {
+      question: 'Qual a porta padrão do HTTPS?',
+      options: ['80', '443', '8080', '22'],
+      answer: '443',
+      explanation: 'HTTPS usa a porta 443 (TCP; UDP no caso do HTTP/3).',
+    },
+    {
+      question: 'O SSH usa por padrão a porta:',
+      options: ['21', '22', '23', '25'],
+      answer: '22',
+      explanation: 'SSH escuta na porta 22/TCP. A 23 é o Telnet, que não tem criptografia.',
+    },
+    {
+      question: 'A faixa de portas bem conhecidas (well-known) é:',
+      options: ['0 – 1023', '1024 – 49151', '49152 – 65535', '0 – 65535'],
+      answer: '0 – 1023',
+      explanation: 'As portas 0–1023 são reservadas para serviços padrão.',
+    },
+    {
+      question: 'Em uma varredura, uma porta que não responde nada provavelmente está:',
+      options: ['Aberta', 'Fechada', 'Filtrada', 'Em TIME_WAIT'],
+      answer: 'Filtrada',
+      explanation: 'Sem resposta é o comportamento típico de um firewall descartando pacotes.',
+    },
+    {
+      question: 'Qual porta pertence ao RDP (Remote Desktop Protocol)?',
+      options: ['3306', '3389', '445', '5900'],
+      answer: '3389',
+      explanation: 'O RDP usa a porta 3389/TCP. Expô-lo diretamente na Internet é um risco grave.',
+    },
+    {
+      question: 'Um socket é definido por:',
+      options: ['Somente o IP', 'Somente a porta', 'Endereço IP + porta (+ protocolo)', 'Endereço MAC + porta'],
+      answer: 'Endereço IP + porta (+ protocolo)',
+      explanation: 'O socket identifica uma ponta da comunicação: IP, porta e protocolo de transporte.',
+    },
+  ],
+  details: {
+    objectives: [
+      'Explicar a função das portas e dos sockets.',
+      'Identificar as faixas de portas definidas pela IANA.',
+      'Associar as principais portas aos seus serviços.',
+      'Verificar portas abertas em um host de forma ética.',
+    ],
+    keyPoints: [
+      'Porta = 16 bits (0–65535); identifica a aplicação no host.',
+      'Well-known 0–1023; registradas 1024–49151; efêmeras 49152–65535.',
+      'Memorize: 22 SSH, 53 DNS, 80 HTTP, 443 HTTPS, 3389 RDP.',
+      'Aberta, fechada, filtrada: cada estado diz algo diferente.',
+      'Só faça varreduras em ambientes autorizados.',
+    ],
+    commands: [
+      { title: 'Portas em escuta no seu computador', platform: 'Windows', code: 'netstat -ano | findstr LISTENING\nGet-NetTCPConnection -State Listen' },
+      { title: 'Portas em escuta no seu computador', platform: 'Linux/macOS', code: 'sudo ss -tulpn          # Linux\nsudo lsof -iTCP -sTCP:LISTEN -n -P   # macOS' },
+      { title: 'Auditoria com nmap (apenas em hosts autorizados)', platform: 'Multiplataforma', code: 'nmap localhost\nnmap -sV -p 22,80,443 192.168.1.10', note: '-sV tenta identificar a versão do serviço.' },
+    ],
+    pitfalls: [
+      { problem: 'Achar que mudar a porta do serviço o torna seguro.', solution: 'Trocar a porta reduz ruído de bots, mas não substitui autenticação forte e firewall.' },
+      { problem: 'Liberar no firewall a porta errada (TCP em vez de UDP).', solution: 'Confira o protocolo: DNS e WireGuard, por exemplo, usam UDP.' },
+      { problem: 'Serviço "não funciona" porque escuta só em 127.0.0.1.', solution: 'Verifique o endereço de bind no ss/netstat: 0.0.0.0 aceita conexões externas.' },
+    ],
+    security: [
+      'Princípio do menor privilégio: feche todas as portas que não são necessárias.',
+      'Nunca exponha Telnet, SMB, RDP ou bancos de dados diretamente na Internet; use VPN.',
+      'Monitore varreduras com IDS e bloqueie IPs abusivos (fail2ban, listas de bloqueio).',
+    ],
+    lab: {
+      title: 'Inventário de portas do seu computador',
+      goal: 'Descobrir quais serviços estão escutando e decidir se deveriam.',
+      tools: 'ss/netstat e nmap.',
+      steps: [
+        'Liste as portas em escuta com ss -tulpn (Linux) ou netstat -ano (Windows).',
+        'Para cada porta, identifique o processo responsável.',
+        'Rode nmap localhost e compare com a lista anterior.',
+        'Anote quais serviços você pode desativar com segurança.',
+      ],
+      expected: 'Uma tabela porta → processo → necessidade (sim/não).',
+    },
+    references: ['IANA Service Name and Transport Protocol Port Number Registry', 'RFC 6335 — Procedures for Port Number Assignment', 'Documentação do Nmap (nmap.org/book)'],
+  },
+};
