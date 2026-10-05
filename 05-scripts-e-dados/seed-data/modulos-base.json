@@ -1,0 +1,13 @@
+{
+  "modulos": [
+    "Introdução às Redes",
+    "Modelo OSI",
+    "TCP/IP",
+    "IPv4",
+    "Subnetting",
+    "MAC e ARP",
+    "TCP e UDP",
+    "DNS",
+    "DHCP"
+  ]
+}
