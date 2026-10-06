@@ -6,7 +6,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "docs:conteudo": "npx --yes tsx 05-scripts-e-dados/scripts/exportar-conteudo.ts"
   },
   "dependencies": {
     "@types/better-sqlite3": "^9.6.0",

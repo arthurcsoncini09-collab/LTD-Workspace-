@@ -1,33 +1,30 @@
+<!-- Arquivo gerado por `npm run docs:conteudo` a partir de lib/content. Edite o conteúdo lá, não aqui. -->
+
 # Módulos
 
-O conteúdo de cada módulo fica em `lib/content/modules/` (um arquivo por módulo) e é carregado
-automaticamente no banco SQLite. Ao alterar qualquer conteúdo, incremente `CONTENT_VERSION` em
-`lib/content/index.ts` para que o banco seja recriado.
+20 módulos · 43 aulas · 134 questões · versão do conteúdo 2.
 
-Cada módulo contém: objetivos de aprendizagem, aulas (introdução, por que importa, explicação,
-seções com tabelas/código, contexto real, exercício com resposta e desafio), comandos úteis
-(Windows, Linux e Cisco IOS), erros comuns, segurança, pontos-chave, laboratório prático,
-quiz e leituras recomendadas.
+O conteúdo-fonte fica em `lib/content/modules/` (um arquivo por módulo). Ao alterá-lo, incremente `CONTENT_VERSION` em `lib/content/index.ts` (o banco é recriado automaticamente) e rode `npm run docs:conteudo` para atualizar esta pasta.
 
-| # | Módulo | Nível | Arquivo |
-|---|--------|-------|---------|
-| 1 | Introdução às Redes | Básico | `01-introducao-redes.ts` |
-| 2 | Modelo OSI | Básico | `02-modelo-osi.ts` |
-| 3 | TCP/IP | Básico | `03-tcp-ip.ts` |
-| 4 | IPv4 | Básico | `04-ipv4.ts` |
-| 5 | Subnetting | Intermediário | `05-subnetting.ts` |
-| 6 | MAC e ARP | Intermediário | `06-mac-e-arp.ts` |
-| 7 | TCP e UDP | Intermediário | `07-tcp-udp.ts` |
-| 8 | Portas de Rede | Intermediário | `08-portas-de-rede.ts` |
-| 9 | DNS | Intermediário | `09-dns.ts` |
-| 10 | DHCP | Intermediário | `10-dhcp.ts` |
-| 11 | HTTP/HTTPS | Intermediário | `11-http-https.ts` |
-| 12 | SSH | Intermediário | `12-ssh.ts` |
-| 13 | ICMP | Intermediário | `13-icmp.ts` |
-| 14 | Switch | Avançado | `14-switch.ts` |
-| 15 | Router | Avançado | `15-router.ts` |
-| 16 | NAT e PAT | Avançado | `16-nat-pat.ts` |
-| 17 | Firewall | Avançado | `17-firewall.ts` |
-| 18 | VLAN | Avançado | `18-vlan.ts` |
-| 19 | VPN | Avançado | `19-vpn.ts` |
-| 20 | Desafio Final | Projeto | `20-desafio-final.ts` |
+| # | Módulo | Nível | Aulas | Questões | Documento |
+| --- | --- | --- | --- | --- | --- |
+| 1 | Introdução às Redes | Básico | 3 | 6 | [01-introducao-redes.md](01-introducao-redes.md) |
+| 2 | Modelo OSI | Básico | 3 | 6 | [02-modelo-osi.md](02-modelo-osi.md) |
+| 3 | TCP/IP | Básico | 2 | 5 | [03-tcp-ip.md](03-tcp-ip.md) |
+| 4 | IPv4 | Básico | 3 | 6 | [04-ipv4.md](04-ipv4.md) |
+| 5 | Subnetting | Intermediário | 2 | 7 | [05-subnetting.md](05-subnetting.md) |
+| 6 | MAC e ARP | Intermediário | 2 | 6 | [06-mac-e-arp.md](06-mac-e-arp.md) |
+| 7 | TCP e UDP | Intermediário | 2 | 6 | [07-tcp-udp.md](07-tcp-udp.md) |
+| 8 | Portas de Rede | Intermediário | 2 | 6 | [08-portas-de-rede.md](08-portas-de-rede.md) |
+| 9 | DNS | Intermediário | 2 | 6 | [09-dns.md](09-dns.md) |
+| 10 | DHCP | Intermediário | 2 | 6 | [10-dhcp.md](10-dhcp.md) |
+| 11 | HTTP/HTTPS | Intermediário | 2 | 6 | [11-http-https.md](11-http-https.md) |
+| 12 | SSH | Intermediário | 2 | 6 | [12-ssh.md](12-ssh.md) |
+| 13 | ICMP | Intermediário | 2 | 6 | [13-icmp.md](13-icmp.md) |
+| 14 | Switch | Avançado | 2 | 6 | [14-switch.md](14-switch.md) |
+| 15 | Router | Avançado | 2 | 6 | [15-router.md](15-router.md) |
+| 16 | NAT e PAT | Avançado | 2 | 6 | [16-nat-e-pat.md](16-nat-e-pat.md) |
+| 17 | Firewall | Avançado | 2 | 6 | [17-firewall.md](17-firewall.md) |
+| 18 | VLAN | Avançado | 2 | 6 | [18-vlan.md](18-vlan.md) |
+| 19 | VPN | Avançado | 2 | 6 | [19-vpn.md](19-vpn.md) |
+| 20 | Desafio Final | Projeto | 2 | 20 | [20-desafio-final.md](20-desafio-final.md) |
