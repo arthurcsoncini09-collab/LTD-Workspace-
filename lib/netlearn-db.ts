@@ -71,7 +71,9 @@ type ModuleRow = Omit<Module, 'details' | 'lessons' | 'quizQuestions'> & { detai
 type LessonRow = Omit<Lesson, 'keywords' | 'sections'> & { keywords: string; sections: string };
 type QuizRow = Omit<QuizQuestion, 'options'> & { options: string };
 
-const DB_DIR = path.join(process.cwd(), 'db');
+// Na Vercel (e em outras plataformas serverless) só /tmp aceita escrita. O banco é gerado a
+// partir de lib/content, então recriá-lo em /tmp a cada nova instância não perde nada.
+const DB_DIR = process.env.VERCEL ? path.join('/tmp', 'netlearn') : path.join(process.cwd(), 'db');
 const DB_PATH = path.join(DB_DIR, 'netlearn.db');
 
 const SCHEMA = `
