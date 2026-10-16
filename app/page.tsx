@@ -2,17 +2,30 @@ import Link from 'next/link';
 import { ArrowRight, BookOpen, Cpu, Globe, Shield, Wifi, Rocket, Router, Server, Network, Layers3 } from 'lucide-react';
 
 const featureCards = [
-  { title: 'Redes', icon: Network, text: 'Entenda LAN, WAN, Internet e protocolos de forma visual.' },
-  { title: 'TCP/IP', icon: Layers3, text: 'Descubra como pacotes viajam em camadas e em cada etapa.' },
-  { title: 'IPv4 & Subnetting', icon: Cpu, text: 'Aprenda endereços, máscara, rede e broadcast sem mistério.' },
-  { title: 'DNS', icon: Globe, text: 'Veja como o domínio vira IP e como a conexão começa.' },
-  { title: 'DHCP', icon: Wifi, text: 'Observe a negociação de IP, gateway e configurações da rede.' },
-  { title: 'Switches', icon: Router, text: 'Entenda a tabela MAC e como o switch encaminha quadros.' },
-  { title: 'Roteadores', icon: Server, text: 'Explore tabela de rotas, gateway e redes diferentes.' },
-  { title: 'Firewalls', icon: Shield, text: 'Veja regras de permissão e bloqueio em ação.' },
+  { title: 'Redes', icon: Network, href: '/aulas/introducao-redes', text: 'Entenda LAN, WAN, Internet e protocolos de forma visual.' },
+  { title: 'TCP/IP', icon: Layers3, href: '/aulas/tcp-ip', text: 'Descubra como pacotes viajam em camadas e em cada etapa.' },
+  { title: 'IPv4 & Subnetting', icon: Cpu, href: '/aulas/subnetting', text: 'Aprenda endereços, máscara, rede e broadcast sem mistério.' },
+  { title: 'DNS', icon: Globe, href: '/aulas/dns', text: 'Veja como o domínio vira IP e como a conexão começa.' },
+  { title: 'DHCP', icon: Wifi, href: '/aulas/dhcp', text: 'Observe a negociação de IP, gateway e configurações da rede.' },
+  { title: 'Switches', icon: Router, href: '/aulas/switch', text: 'Entenda a tabela MAC e como o switch encaminha quadros.' },
+  { title: 'Roteadores', icon: Server, href: '/aulas/router', text: 'Explore tabela de rotas, gateway e redes diferentes.' },
+  { title: 'Firewalls', icon: Shield, href: '/aulas/firewall', text: 'Veja regras de permissão e bloqueio em ação.' },
 ];
 
-const labs = ['Subnetting Lab', 'Packet Journey', 'Network Simulator', 'Terminal Lab'];
+const labs = [
+  { title: 'Subnetting Lab', href: '/labs/subnetting', text: 'Calcule rede, broadcast e hosts com resolução passo a passo.' },
+  { title: 'Packet Journey', href: '/labs/packet-journey', text: 'Acompanhe cada etapa da viagem de um pacote pela Internet.' },
+  { title: 'Network Simulator', href: '/labs/network-simulator', text: 'Configure IP e gateway e descubra por que o ping falha.' },
+  { title: 'Terminal Lab', href: '/terminal', text: 'Pratique ping, tracert, nslookup e arp com explicações.' },
+];
+
+const preview = [
+  { title: 'Introdução às Redes', slug: 'introducao-redes' },
+  { title: 'Modelo OSI', slug: 'modelo-osi' },
+  { title: 'IPv4 e Subnetting', slug: 'subnetting' },
+  { title: 'DNS e DHCP', slug: 'dns' },
+  { title: 'Switch e Router', slug: 'switch' },
+];
 
 export default function HomePage() {
   return (
@@ -38,10 +51,10 @@ export default function HomePage() {
                 Explorar o curso
               </Link>
             </div>
-            <div className="mt-8 flex items-center gap-8 text-sm text-slate-400">
-              <span>4.8/5 avaliações</span>
+            <div className="mt-8 flex flex-wrap items-center gap-x-8 gap-y-2 text-sm text-slate-400">
+              <span>20 módulos</span>
+              <span>4 laboratórios interativos</span>
               <span>100% gratuito</span>
-              <span>+12 laboratórios</span>
             </div>
           </div>
 
@@ -52,23 +65,21 @@ export default function HomePage() {
                   <div className="text-xs uppercase tracking-[0.2em] text-slate-400">Curso</div>
                   <div className="mt-2 text-2xl font-bold">Fundamentos de Redes</div>
                 </div>
-                <div className="rounded-full bg-emerald-500/15 px-2 py-1 text-xs font-medium text-emerald-300">82% progress</div>
+                <div className="rounded-full bg-emerald-500/15 px-2 py-1 text-xs font-medium text-emerald-300">20 módulos</div>
               </div>
               <div className="space-y-4">
-                {[
-                  'Introdução às Redes',
-                  'Modelo OSI',
-                  'IPv4 e Subnetting',
-                  'DNS e DHCP',
-                  'Switch e Router',
-                ].map((item, index) => (
-                  <div key={item} className="flex items-center gap-3 rounded-xl border border-slate-800 bg-slate-950/60 p-3">
+                {preview.map((item, index) => (
+                  <Link
+                    key={item.slug}
+                    href={`/aulas/${item.slug}`}
+                    className="flex items-center gap-3 rounded-xl border border-slate-800 bg-slate-950/60 p-3 transition hover:border-cyan-400/50"
+                  >
                     <div className="flex h-8 w-8 items-center justify-center rounded-full bg-blue-500/15 text-sm font-semibold text-blue-200">
                       {index + 1}
                     </div>
-                    <div className="flex-1 text-sm text-slate-200">{item}</div>
+                    <div className="flex-1 text-sm text-slate-200">{item.title}</div>
                     <ArrowRight className="h-4 w-4 text-slate-500" />
-                  </div>
+                  </Link>
                 ))}
               </div>
             </div>
@@ -85,14 +96,14 @@ export default function HomePage() {
           <Link href="/trilha" className="text-sm text-blue-300 hover:text-blue-200">Ver trilha completa →</Link>
         </div>
         <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-4">
-          {featureCards.map(({ title, text, icon: Icon }) => (
-            <div key={title} className="card-surface rounded-2xl p-5">
+          {featureCards.map(({ title, text, href, icon: Icon }) => (
+            <Link key={title} href={href} className="card-surface rounded-2xl p-5 transition hover:-translate-y-1">
               <div className="mb-5 flex h-12 w-12 items-center justify-center rounded-xl bg-blue-500/10 text-blue-300">
                 <Icon className="h-5 w-5" />
               </div>
               <div className="text-xl font-semibold text-white">{title}</div>
               <p className="mt-3 text-sm leading-relaxed text-slate-300">{text}</p>
-            </div>
+            </Link>
           ))}
         </div>
       </section>
@@ -104,13 +115,13 @@ export default function HomePage() {
         </div>
         <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-4">
           {labs.map((lab) => (
-            <div className="card-surface rounded-2xl p-5" key={lab}>
+            <Link href={lab.href} className="card-surface rounded-2xl p-5 transition hover:-translate-y-1" key={lab.title}>
               <div className="mb-3 flex h-12 w-12 items-center justify-center rounded-xl bg-cyan-500/10 text-cyan-300">
                 <BookOpen className="h-5 w-5" />
               </div>
-              <div className="text-xl font-semibold text-white">{lab}</div>
-              <p className="mt-3 text-sm text-slate-300">Simulação prática para visualizar a rede em ação e aplicar conceitos reais.</p>
-            </div>
+              <div className="text-xl font-semibold text-white">{lab.title}</div>
+              <p className="mt-3 text-sm text-slate-300">{lab.text}</p>
+            </Link>
           ))}
         </div>
       </section>

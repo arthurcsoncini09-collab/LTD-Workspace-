@@ -2,7 +2,8 @@ import type { Config } from 'tailwindcss';
 
 const config: Config = {
   darkMode: ['class'],
-  content: ['./app/**/*.{js,ts,jsx,tsx,mdx}', './components/**/*.{js,ts,jsx,tsx,mdx}'],
+  // lib/ entra aqui porque as cores (accent) dos módulos são definidas em lib/content.
+  content: ['./app/**/*.{js,ts,jsx,tsx,mdx}', './components/**/*.{js,ts,jsx,tsx,mdx}', './lib/**/*.{js,ts,jsx,tsx}'],
   theme: {
     extend: {
       colors: {

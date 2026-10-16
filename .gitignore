@@ -3,3 +3,8 @@ node_modules
 out
 npm-debug.log*
 .DS_Store
+*.tsbuildinfo
+build.log
+
+# Banco SQLite gerado automaticamente a partir de lib/content (não versionar)
+db/

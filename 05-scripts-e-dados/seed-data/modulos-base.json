@@ -1,4 +1,5 @@
 {
+  "versao": 2,
   "modulos": [
     "Introdução às Redes",
     "Modelo OSI",
@@ -7,7 +8,18 @@
     "Subnetting",
     "MAC e ARP",
     "TCP e UDP",
+    "Portas de Rede",
     "DNS",
-    "DHCP"
+    "DHCP",
+    "HTTP/HTTPS",
+    "SSH",
+    "ICMP",
+    "Switch",
+    "Router",
+    "NAT e PAT",
+    "Firewall",
+    "VLAN",
+    "VPN",
+    "Desafio Final"
   ]
 }

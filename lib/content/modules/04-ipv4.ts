@@ -1,0 +1,235 @@
+import type { ModuleSeed } from '../types';
+
+export const ipv4: ModuleSeed = {
+  slug: 'ipv4',
+  title: 'Módulo 4 — IPv4',
+  stage: 'Básico',
+  description: 'Estrutura do endereço IPv4, binário, classes, endereços privados e especiais, máscara, CIDR e o cabeçalho IP.',
+  accent: 'from-indigo-500 to-violet-500',
+  objective: 'Ler, converter e classificar endereços IPv4, entender a máscara de sub-rede e conhecer os campos do cabeçalho IP.',
+  summary: 'O endereço IPv4 tem 32 bits divididos em parte de rede e parte de host. A máscara indica onde está essa divisão. Endereços privados, públicos e especiais têm papéis bem definidos.',
+  lessons: [
+    {
+      slug: 'enderecos-ipv4',
+      title: 'Estrutura e notação do endereço IPv4',
+      introduction: 'Um endereço IPv4 é um número de 32 bits, escrito em notação decimal pontuada: quatro octetos de 8 bits separados por pontos, cada um de 0 a 255. Exemplo: 192.168.10.130.',
+      why_it_matters: 'Todo dispositivo em uma rede IP precisa de um endereço. Saber ler e converter endereços é pré-requisito para subnetting, roteamento e firewall.',
+      real_world: 'Seu celular no Wi-Fi de casa provavelmente tem um IP como 192.168.0.15 (privado). Na Internet, ele aparece com o IP público do seu roteador, atribuído pelo provedor.',
+      explanation: 'Cada octeto é um número binário de 8 bits. Os pesos das posições são 128, 64, 32, 16, 8, 4, 2, 1. Para converter 130 em binário: 130 = 128 + 2 → 10000010.',
+      exercise: 'Converta 192.168.10.130 para binário.',
+      exercise_answer: '11000000.10101000.00001010.10000010',
+      challenge: 'Converta 11000000.10101000.00000001.11111110 para decimal e diga se é um endereço privado.',
+      keywords: ['IPv4', 'octeto', 'binário', '32 bits', 'decimal pontuado'],
+      sections: [
+        {
+          title: 'Tabela de conversão binária',
+          table: {
+            headers: ['Bit', '8º', '7º', '6º', '5º', '4º', '3º', '2º', '1º'],
+            rows: [
+              ['Peso', '128', '64', '32', '16', '8', '4', '2', '1'],
+              ['130', '1', '0', '0', '0', '0', '0', '1', '0'],
+              ['192', '1', '1', '0', '0', '0', '0', '0', '0'],
+              ['255', '1', '1', '1', '1', '1', '1', '1', '1'],
+            ],
+          },
+        },
+        {
+          title: 'Classes (modelo histórico)',
+          content: 'Antes do CIDR (1993), os endereços eram divididos em classes fixas. Hoje usamos CIDR, mas as classes ainda aparecem em provas e explicam máscaras "padrão".',
+          table: {
+            headers: ['Classe', 'Primeiro octeto', 'Máscara padrão', 'Uso'],
+            rows: [
+              ['A', '1 – 126', '255.0.0.0 (/8)', 'Redes muito grandes'],
+              ['B', '128 – 191', '255.255.0.0 (/16)', 'Redes médias'],
+              ['C', '192 – 223', '255.255.255.0 (/24)', 'Redes pequenas'],
+              ['D', '224 – 239', '—', 'Multicast'],
+              ['E', '240 – 255', '—', 'Experimental'],
+            ],
+          },
+        },
+        {
+          title: 'Endereços privados e especiais',
+          table: {
+            headers: ['Faixa', 'Finalidade'],
+            rows: [
+              ['10.0.0.0/8', 'Privado (RFC 1918)'],
+              ['172.16.0.0/12 (172.16 a 172.31)', 'Privado (RFC 1918)'],
+              ['192.168.0.0/16', 'Privado (RFC 1918)'],
+              ['127.0.0.0/8', 'Loopback (127.0.0.1 = a própria máquina)'],
+              ['169.254.0.0/16', 'APIPA / link-local: indica falha no DHCP'],
+              ['100.64.0.0/10', 'CGNAT (endereços compartilhados de provedores)'],
+              ['224.0.0.0/4', 'Multicast'],
+              ['255.255.255.255', 'Broadcast limitado'],
+              ['192.0.2.0/24, 198.51.100.0/24, 203.0.113.0/24', 'Reservados para documentação'],
+            ],
+          },
+        },
+      ],
+    },
+    {
+      slug: 'subrede-e-mascara',
+      title: 'Máscara de sub-rede e CIDR',
+      introduction: 'A máscara de sub-rede indica quais bits do endereço pertencem à rede e quais pertencem ao host. Os bits 1 da máscara marcam a rede; os bits 0 marcam o host.',
+      why_it_matters: 'Sem a máscara, o computador não sabe se o destino está na mesma rede (entrega direta) ou em outra rede (envia ao gateway). Uma máscara errada causa falhas de comunicação difíceis de perceber.',
+      real_world: 'Em casa, a máscara costuma ser 255.255.255.0 (/24): os três primeiros octetos identificam a rede (192.168.0) e o último, o host (1 a 254).',
+      explanation: 'A notação CIDR escreve a máscara como a quantidade de bits 1: 255.255.255.0 tem 24 bits 1, então é /24. Para achar o endereço de rede, faz-se um AND bit a bit entre o IP e a máscara.',
+      exercise: 'Qual é o endereço de rede de 172.16.45.200/16?',
+      exercise_answer: '172.16.0.0 — com /16, os dois primeiros octetos são rede e os dois últimos ficam zerados.',
+      challenge: 'Dois PCs: 192.168.1.10/24 e 192.168.2.20/24. Eles estão na mesma rede? Precisam de roteador para se comunicar?',
+      keywords: ['máscara', 'CIDR', 'prefixo', 'AND lógico', 'gateway', 'broadcast'],
+      sections: [
+        {
+          title: 'Máscaras comuns',
+          table: {
+            headers: ['CIDR', 'Máscara decimal', 'Hosts utilizáveis'],
+            rows: [
+              ['/8', '255.0.0.0', '16.777.214'],
+              ['/16', '255.255.0.0', '65.534'],
+              ['/24', '255.255.255.0', '254'],
+              ['/25', '255.255.255.128', '126'],
+              ['/26', '255.255.255.192', '62'],
+              ['/27', '255.255.255.224', '30'],
+              ['/28', '255.255.255.240', '14'],
+              ['/30', '255.255.255.252', '2'],
+            ],
+          },
+        },
+        {
+          title: 'Calculando o endereço de rede (AND)',
+          code: 'IP       192.168.10.130  = 11000000.10101000.00001010.10000010\nMáscara  255.255.255.192 = 11111111.11111111.11111111.11000000\nAND      192.168.10.128  = 11000000.10101000.00001010.10000000',
+          content: 'Rede: 192.168.10.128/26 · Broadcast: 192.168.10.191 · Hosts: .129 a .190.',
+        },
+        {
+          title: 'Unicast, broadcast e multicast',
+          items: [
+            'Unicast: de um host para um host específico.',
+            'Broadcast: para todos os hosts da rede (ex.: 192.168.1.255 em uma /24). Não atravessa roteadores.',
+            'Multicast: para um grupo de hosts interessados (224.0.0.0/4), como streaming IPTV e protocolos de roteamento.',
+          ],
+        },
+      ],
+    },
+    {
+      slug: 'cabecalho-ipv4-e-ipv6',
+      title: 'Cabeçalho IPv4, esgotamento e IPv6',
+      introduction: 'Todo pacote IPv4 carrega um cabeçalho de no mínimo 20 bytes com informações de controle. E como o IPv4 tem "só" cerca de 4,3 bilhões de endereços, o mundo está migrando para o IPv6.',
+      why_it_matters: 'Campos como TTL e flags de fragmentação explicam o funcionamento do traceroute e problemas de MTU. O IPv6 já transporta uma parcela grande do tráfego da Internet.',
+      real_world: 'Os registros regionais (como o LACNIC, que atende o Brasil) esgotaram seus estoques de IPv4. Provedores usam CGNAT e implantam IPv6 para continuar crescendo.',
+      explanation: 'O TTL (Time To Live) começa com um valor (ex.: 64 ou 128) e é decrementado a cada roteador. Se chegar a zero, o pacote é descartado e um ICMP "Time Exceeded" é enviado — isso evita loops infinitos.',
+      exercise: 'Para que serve o campo TTL no cabeçalho IPv4?',
+      exercise_answer: 'Limitar a vida útil do pacote: cada roteador decrementa o TTL e descarta o pacote quando chega a zero, evitando loops de roteamento infinitos.',
+      challenge: 'Quantos endereços existem no IPv4 (2^32) e no IPv6 (2^128)? Escreva a ordem de grandeza de cada um.',
+      keywords: ['cabeçalho IP', 'TTL', 'fragmentação', 'MTU', 'IPv6', 'esgotamento'],
+      sections: [
+        {
+          title: 'Principais campos do cabeçalho IPv4',
+          table: {
+            headers: ['Campo', 'Função'],
+            rows: [
+              ['Versão', '4 para IPv4'],
+              ['IHL', 'Tamanho do cabeçalho'],
+              ['DSCP/ECN', 'Prioridade (QoS) e notificação de congestionamento'],
+              ['Total Length', 'Tamanho total do pacote'],
+              ['Identification, Flags, Fragment Offset', 'Controle de fragmentação'],
+              ['TTL', 'Número máximo de saltos'],
+              ['Protocol', 'Protocolo de cima: 1 = ICMP, 6 = TCP, 17 = UDP'],
+              ['Header Checksum', 'Detecção de erros no cabeçalho'],
+              ['Source / Destination Address', 'IP de origem e de destino'],
+            ],
+          },
+        },
+        {
+          title: 'IPv6 em poucas linhas',
+          items: [
+            '128 bits, escritos em hexadecimal: 2001:db8:acad:1::10.',
+            'Zeros à esquerda podem ser omitidos e uma sequência de blocos zero vira "::" (uma vez por endereço).',
+            'Não existe broadcast; usa multicast e o protocolo NDP no lugar do ARP.',
+            'Autoconfiguração (SLAAC) permite obter endereço sem DHCP.',
+            'Cabeçalho simplificado de 40 bytes fixos; roteadores não fragmentam.',
+          ],
+        },
+      ],
+    },
+  ],
+  quizQuestions: [
+    {
+      question: 'Quantos bits tem um endereço IPv4?',
+      options: ['16', '32', '64', '128'],
+      answer: '32',
+      explanation: 'IPv4 tem 32 bits (4 octetos de 8 bits). O IPv6 tem 128.',
+    },
+    {
+      question: 'Qual destes é um endereço privado (RFC 1918)?',
+      options: ['8.8.8.8', '172.20.5.1', '200.10.10.1', '172.32.0.1'],
+      answer: '172.20.5.1',
+      explanation: 'A faixa privada 172.16.0.0/12 vai de 172.16.0.0 a 172.31.255.255.',
+    },
+    {
+      question: 'Um computador com IP 169.254.33.7 provavelmente:',
+      options: ['Está com IP público', 'Não conseguiu obter IP via DHCP', 'Está em uma VPN', 'É um servidor DNS'],
+      answer: 'Não conseguiu obter IP via DHCP',
+      explanation: '169.254.0.0/16 é APIPA: o sistema se autoatribui esse endereço quando o DHCP falha.',
+    },
+    {
+      question: 'Qual a máscara decimal de um /26?',
+      options: ['255.255.255.0', '255.255.255.128', '255.255.255.192', '255.255.255.224'],
+      answer: '255.255.255.192',
+      explanation: '26 bits 1: o último octeto é 11000000 = 192.',
+    },
+    {
+      question: 'Qual o endereço de rede de 192.168.10.130/26?',
+      options: ['192.168.10.0', '192.168.10.128', '192.168.10.130', '192.168.10.192'],
+      answer: '192.168.10.128',
+      explanation: 'Blocos de 64 no último octeto: 0, 64, 128, 192. O 130 cai no bloco 128.',
+    },
+    {
+      question: 'O que acontece quando o TTL de um pacote chega a zero?',
+      options: ['Ele é enviado em broadcast', 'Ele é descartado', 'Ele volta para a origem', 'O TTL é reiniciado'],
+      answer: 'Ele é descartado',
+      explanation: 'O roteador descarta o pacote e normalmente envia um ICMP Time Exceeded à origem.',
+    },
+  ],
+  details: {
+    objectives: [
+      'Converter endereços IPv4 entre binário e decimal.',
+      'Identificar endereços privados, públicos, de loopback, APIPA e multicast.',
+      'Aplicar a máscara para encontrar rede e broadcast.',
+      'Explicar campos importantes do cabeçalho IPv4 e a motivação do IPv6.',
+    ],
+    keyPoints: [
+      'IPv4 = 32 bits em 4 octetos (0–255).',
+      'Privados: 10/8, 172.16/12, 192.168/16.',
+      '169.254.x.x indica falha no DHCP; 127.0.0.1 é a própria máquina.',
+      'Máscara separa rede e host; CIDR /n = n bits de rede.',
+      'TTL evita loops; IPv6 resolve o esgotamento com 128 bits.',
+    ],
+    commands: [
+      { title: 'Ver IP, máscara e gateway', platform: 'Windows', code: 'ipconfig' },
+      { title: 'Ver IP e rotas', platform: 'Linux/macOS', code: 'ip -4 addr\nip route' },
+      { title: 'Configurar IP em uma interface', platform: 'Cisco IOS', code: 'interface g0/0\n ip address 192.168.10.1 255.255.255.0\n no shutdown' },
+    ],
+    pitfalls: [
+      { problem: 'Usar 172.32.x.x achando que é privado.', solution: 'A faixa privada termina em 172.31.255.255.' },
+      { problem: 'Atribuir a um host o endereço de rede ou de broadcast.', solution: 'Esses dois endereços não podem ser usados por hosts.' },
+      { problem: 'Gateway em uma sub-rede diferente da do host.', solution: 'O gateway precisa estar na mesma sub-rede que o host.' },
+    ],
+    security: [
+      'Endereços privados não são roteados na Internet, mas isso não é segurança: use firewall.',
+      'Bloqueie na borda pacotes vindos da Internet com IP de origem privado (anti-spoofing).',
+      'Não exponha o IP público de equipamentos de gerência sem necessidade.',
+    ],
+    lab: {
+      title: 'Conversão e classificação de IPs',
+      goal: 'Fixar binário, máscara e tipos de endereço.',
+      tools: 'Papel e caneta + Subnetting Lab do NetLearn para conferir.',
+      steps: [
+        'Converta para binário: 10.0.0.1, 172.16.5.4, 192.168.100.200.',
+        'Classifique cada um como privado ou público.',
+        'Para 10.20.30.40/12, calcule o endereço de rede.',
+        'Confira os resultados no Subnetting Lab.',
+      ],
+      expected: 'Todas as conversões corretas e a rede 10.16.0.0 para o último item.',
+    },
+    references: ['RFC 791 — Internet Protocol', 'RFC 1918 — Address Allocation for Private Internets', 'RFC 4632 — CIDR', 'RFC 8200 — IPv6'],
+  },
+};

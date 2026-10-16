@@ -1,0 +1,206 @@
+import type { ModuleSeed } from '../types';
+
+export const subnetting: ModuleSeed = {
+  slug: 'subnetting',
+  title: 'Módulo 5 — Subnetting',
+  stage: 'Intermediário',
+  description: 'Dividir redes em sub-redes: número mágico, cálculo de rede/broadcast/hosts, VLSM, sumarização e exercícios resolvidos.',
+  accent: 'from-fuchsia-500 to-indigo-500',
+  objective: 'Calcular sub-redes com rapidez e precisão, projetar um plano de endereçamento com VLSM e sumarizar rotas.',
+  summary: 'Subnetting é dividir uma rede maior em redes menores emprestando bits de host. Com o método do número mágico, é possível calcular rede, broadcast e faixa de hosts de cabeça.',
+  lessons: [
+    {
+      slug: 'subnetting-pratico',
+      title: 'Subnetting prático: o método do número mágico',
+      introduction: 'Ao "emprestar" bits da parte de host para a parte de rede, criamos mais sub-redes, cada uma com menos hosts. A pergunta-chave é sempre: quantos bits de host sobram?',
+      why_it_matters: 'Sub-redes reduzem o domínio de broadcast, isolam departamentos, facilitam a aplicação de regras de segurança e evitam desperdício de endereços.',
+      real_world: 'Uma empresa com a rede 192.168.10.0/24 pode separar Vendas, TI e RH em sub-redes diferentes, cada uma com seu gateway, e aplicar regras de firewall entre elas.',
+      explanation: 'Número mágico (tamanho do bloco) = 256 − valor da máscara no octeto "interessante" (o último octeto que não é 255 nem 0). Os endereços de rede são múltiplos desse número. O broadcast é o próximo endereço de rede menos 1.',
+      exercise: 'Em uma rede /27, quantos hosts utilizáveis existem por sub-rede?',
+      exercise_answer: '32 − 27 = 5 bits de host → 2^5 − 2 = 30 hosts utilizáveis.',
+      challenge: 'Calcule rede, broadcast, primeiro e último host de 192.168.1.77/27 sem calculadora.',
+      keywords: ['subnetting', 'número mágico', 'bloco', 'broadcast', 'hosts', '2^n − 2'],
+      sections: [
+        {
+          title: 'Fórmulas essenciais',
+          items: [
+            'Hosts por sub-rede = 2^(bits de host) − 2 (rede e broadcast não são usáveis).',
+            'Número de sub-redes = 2^(bits emprestados).',
+            'Número mágico = 256 − valor da máscara no octeto interessante.',
+            'Exceções: /31 (2 endereços, usado em links ponto a ponto, RFC 3021) e /32 (um único host, ex.: loopback de roteador).',
+          ],
+        },
+        {
+          title: 'Passo a passo: 192.168.1.77/27',
+          steps: [
+            '/27 → máscara 255.255.255.224. Octeto interessante: o 4º.',
+            'Número mágico: 256 − 224 = 32. Redes: .0, .32, .64, .96, .128…',
+            '77 está entre 64 e 95 → rede 192.168.1.64.',
+            'Broadcast: próxima rede (96) − 1 = 192.168.1.95.',
+            'Hosts: 192.168.1.65 a 192.168.1.94 (30 hosts).',
+          ],
+        },
+        {
+          title: 'Tabela de referência (último octeto)',
+          table: {
+            headers: ['CIDR', 'Máscara', 'Bloco', 'Sub-redes em uma /24', 'Hosts'],
+            rows: [
+              ['/24', '255.255.255.0', '256', '1', '254'],
+              ['/25', '255.255.255.128', '128', '2', '126'],
+              ['/26', '255.255.255.192', '64', '4', '62'],
+              ['/27', '255.255.255.224', '32', '8', '30'],
+              ['/28', '255.255.255.240', '16', '16', '14'],
+              ['/29', '255.255.255.248', '8', '32', '6'],
+              ['/30', '255.255.255.252', '4', '64', '2'],
+              ['/31', '255.255.255.254', '2', '128', '2 (ponto a ponto)'],
+              ['/32', '255.255.255.255', '1', '256', '1 (host único)'],
+            ],
+          },
+        },
+        {
+          title: 'Quando o octeto interessante não é o último',
+          content: 'Em 172.16.50.10/20, a máscara é 255.255.240.0. O octeto interessante é o 3º; número mágico = 256 − 240 = 16. Redes no 3º octeto: 0, 16, 32, 48, 64… O 50 cai no bloco 48.',
+          example: 'Rede 172.16.48.0 · Broadcast 172.16.63.255 · Hosts 172.16.48.1 a 172.16.63.254 (4.094 hosts).',
+        },
+      ],
+    },
+    {
+      slug: 'dimensionamento-de-rede',
+      title: 'Dimensionamento, VLSM e sumarização',
+      introduction: 'Nem todo departamento precisa do mesmo tamanho de rede. VLSM (Variable Length Subnet Mask) permite usar máscaras diferentes para cada sub-rede, conforme a necessidade.',
+      why_it_matters: 'Com VLSM, um link entre dois roteadores usa uma /30 (2 hosts) em vez de desperdiçar uma /24 inteira (254 hosts). A sumarização reduz o tamanho das tabelas de roteamento.',
+      real_world: 'Um provedor recebe um bloco /22 e precisa dividi-lo entre clientes de tamanhos diferentes; o roteador de borda anuncia apenas o /22 sumarizado para a Internet.',
+      explanation: 'Regra de ouro do VLSM: ordene as redes da maior para a menor e aloque nessa ordem, sempre começando em um múltiplo do tamanho do bloco. Para escolher o prefixo, encontre a menor potência de 2 que comporte hosts + 2.',
+      exercise: 'Qual o menor prefixo que comporta 50 hosts? E 500 hosts?',
+      exercise_answer: '50 hosts → /26 (62 hosts). 500 hosts → /23 (510 hosts).',
+      challenge: 'Divida 10.0.0.0/24 para: LAN A com 120 hosts, LAN B com 60, LAN C com 25 e dois links ponto a ponto.',
+      keywords: ['VLSM', 'sumarização', 'supernetting', 'plano de endereçamento', 'desperdício'],
+      sections: [
+        {
+          title: 'Exemplo completo de VLSM — 192.168.10.0/24',
+          table: {
+            headers: ['Rede', 'Hosts necessários', 'Prefixo', 'Endereço de rede', 'Faixa de hosts', 'Broadcast'],
+            rows: [
+              ['Vendas', '100', '/25', '192.168.10.0', '.1 – .126', '.127'],
+              ['TI', '50', '/26', '192.168.10.128', '.129 – .190', '.191'],
+              ['RH', '20', '/27', '192.168.10.192', '.193 – .222', '.223'],
+              ['Link R1–R2', '2', '/30', '192.168.10.224', '.225 – .226', '.227'],
+              ['Link R1–R3', '2', '/30', '192.168.10.228', '.229 – .230', '.231'],
+            ],
+          },
+          content: 'Sobra a faixa 192.168.10.232 a .255 para crescimento futuro.',
+        },
+        {
+          title: 'Sumarização de rotas',
+          content: 'Várias redes contíguas podem ser anunciadas como uma só. Escreva-as em binário e conte os bits iniciais em comum.',
+          code: '192.168.0.0/24  → 192.168.000000|00.0\n192.168.1.0/24  → 192.168.000000|01.0\n192.168.2.0/24  → 192.168.000000|10.0\n192.168.3.0/24  → 192.168.000000|11.0\nBits em comum: 16 + 6 = 22  →  rota sumarizada 192.168.0.0/22',
+        },
+        {
+          title: '10 exercícios resolvidos',
+          table: {
+            headers: ['#', 'Pergunta', 'Resposta'],
+            rows: [
+              ['1', '192.168.1.77/27 — rede e broadcast?', '192.168.1.64 e 192.168.1.95'],
+              ['2', '10.10.10.200/28 — faixa de hosts?', '10.10.10.193 a 10.10.10.206'],
+              ['3', '172.16.50.10/20 — rede e broadcast?', '172.16.48.0 e 172.16.63.255'],
+              ['4', '192.168.5.130/25 — rede e broadcast?', '192.168.5.128 e 192.168.5.255'],
+              ['5', '10.0.0.5/30 — hosts válidos?', '10.0.0.5 e 10.0.0.6'],
+              ['6', '192.168.100.33/29 — rede e broadcast?', '192.168.100.32 e 192.168.100.39'],
+              ['7', 'Quantas /26 cabem em uma /24?', '4'],
+              ['8', 'Menor prefixo para 50 hosts?', '/26 (62 hosts)'],
+              ['9', 'Menor prefixo para 500 hosts?', '/23 (510 hosts)'],
+              ['10', '172.31.200.100/22 — rede e broadcast?', '172.31.200.0 e 172.31.203.255'],
+            ],
+          },
+        },
+      ],
+    },
+  ],
+  quizQuestions: [
+    {
+      question: 'Quantos hosts utilizáveis existem em uma sub-rede /28?',
+      options: ['16', '14', '30', '6'],
+      answer: '14',
+      explanation: '4 bits de host: 2^4 − 2 = 14.',
+    },
+    {
+      question: 'Qual é o broadcast da rede 192.168.10.64/26?',
+      options: ['192.168.10.127', '192.168.10.128', '192.168.10.95', '192.168.10.255'],
+      answer: '192.168.10.127',
+      explanation: 'Bloco de 64: a rede vai de .64 a .127; o último endereço é o broadcast.',
+    },
+    {
+      question: 'A qual sub-rede pertence o host 10.10.10.200/28?',
+      options: ['10.10.10.192', '10.10.10.200', '10.10.10.208', '10.10.10.128'],
+      answer: '10.10.10.192',
+      explanation: 'Número mágico 16: redes .176, .192, .208… O 200 está no bloco .192.',
+    },
+    {
+      question: 'Qual o menor prefixo que comporta 100 hosts?',
+      options: ['/24', '/25', '/26', '/27'],
+      answer: '/25',
+      explanation: '/25 oferece 126 hosts; /26 oferece só 62.',
+    },
+    {
+      question: 'Qual prefixo é tipicamente usado em links ponto a ponto entre roteadores (mantendo rede e broadcast)?',
+      options: ['/24', '/28', '/30', '/16'],
+      answer: '/30',
+      explanation: 'A /30 tem exatamente 2 hosts utilizáveis. A /31 também pode ser usada (RFC 3021).',
+    },
+    {
+      question: 'As redes 10.1.0.0/24 a 10.1.3.0/24 podem ser sumarizadas como:',
+      options: ['10.1.0.0/16', '10.1.0.0/22', '10.1.0.0/23', '10.0.0.0/8'],
+      answer: '10.1.0.0/22',
+      explanation: 'Quatro /24 contíguas começando em múltiplo de 4 resultam em uma /22.',
+    },
+    {
+      question: 'No VLSM, em que ordem as sub-redes devem ser alocadas?',
+      options: ['Da menor para a maior', 'Da maior para a menor', 'Em ordem alfabética', 'Tanto faz'],
+      answer: 'Da maior para a menor',
+      explanation: 'Alocar as maiores primeiro garante alinhamento dos blocos e evita sobreposição e desperdício.',
+    },
+  ],
+  details: {
+    objectives: [
+      'Calcular rede, broadcast, faixa de hosts e quantidade de hosts para qualquer prefixo.',
+      'Usar o método do número mágico sem converter tudo para binário.',
+      'Projetar um plano de endereçamento com VLSM.',
+      'Sumarizar redes contíguas em uma única rota.',
+    ],
+    keyPoints: [
+      'Hosts = 2^h − 2; sub-redes = 2^b.',
+      'Número mágico = 256 − máscara no octeto interessante.',
+      'Broadcast = próxima rede − 1.',
+      'VLSM: aloque da maior para a menor rede.',
+      'Sumarização = bits iniciais em comum.',
+    ],
+    commands: [
+      { title: 'Calculadora de sub-rede no terminal', platform: 'Linux/macOS', code: 'ipcalc 192.168.1.77/27\n# ou\nsipcalc 192.168.1.77/27', note: 'Instale com apt install ipcalc (Debian/Ubuntu) ou brew install ipcalc.' },
+      { title: 'Configurar uma sub-rede /27 em uma interface', platform: 'Cisco IOS', code: 'interface g0/1\n ip address 192.168.1.65 255.255.255.224\n no shutdown' },
+      { title: 'Calcular com PowerShell', platform: 'Windows', code: '[ipaddress]$ip = "192.168.1.77"\n[ipaddress]$mask = "255.255.255.224"\n[ipaddress]($ip.Address -band $mask.Address)   # endereço de rede' },
+    ],
+    pitfalls: [
+      { problem: 'Esquecer de subtrair 2 no cálculo de hosts.', solution: 'Rede e broadcast nunca são atribuídos a hosts (exceto /31 e /32).' },
+      { problem: 'Começar uma sub-rede fora de um múltiplo do bloco (ex.: /26 em .100).', solution: 'Redes /26 só começam em .0, .64, .128 ou .192.' },
+      { problem: 'Sobrepor sub-redes no VLSM.', solution: 'Aloque da maior para a menor e marque cada faixa usada em uma tabela.' },
+    ],
+    security: [
+      'Separe redes por função (usuários, servidores, gerência, convidados) e controle o tráfego entre elas com ACLs.',
+      'Sub-redes menores limitam o alcance de ataques de broadcast e varreduras.',
+      'Documente o plano de endereçamento: IPs desconhecidos aparecem mais rápido em auditorias.',
+    ],
+    lab: {
+      title: 'Projeto de endereçamento com VLSM',
+      goal: 'Criar e validar um plano de endereçamento real.',
+      tools: 'Subnetting Lab do NetLearn e Cisco Packet Tracer (opcional).',
+      steps: [
+        'A partir de 172.16.0.0/22, planeje: Produção 300 hosts, Escritório 120, Wi-Fi visitantes 60, Servidores 12 e 2 links /30.',
+        'Monte uma tabela com rede, prefixo, faixa de hosts e broadcast.',
+        'Confira cada sub-rede no Subnetting Lab.',
+        'Opcional: configure as interfaces de um roteador no Packet Tracer e teste com ping.',
+      ],
+      expected: 'Produção 172.16.0.0/23, Escritório 172.16.2.0/25, Visitantes 172.16.2.128/26, Servidores 172.16.2.192/28, links 172.16.2.208/30 e 172.16.2.212/30.',
+    },
+    references: ['RFC 950 — Internet Standard Subnetting Procedure', 'RFC 1878 — Variable Length Subnet Table', 'RFC 3021 — Using 31-Bit Prefixes on Point-to-Point Links'],
+  },
+};

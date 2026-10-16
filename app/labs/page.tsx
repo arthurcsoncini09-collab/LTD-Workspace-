@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { ArrowRight, Cpu, Globe2, Network, Router, Shield, Wifi } from 'lucide-react';
+import { ArrowRight, Cpu, Globe2, Network, Wifi } from 'lucide-react';
 
 const labs = [
   { title: 'Subnetting Lab', description: 'Calcule rede, host, broadcast e máscara com explicações passo a passo.', href: '/labs/subnetting', icon: Cpu },
