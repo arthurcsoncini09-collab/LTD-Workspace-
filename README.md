@@ -66,3 +66,4 @@ O banco `db/netlearn.db` é gerado automaticamente na primeira requisição a pa
 - `lib/auth.ts` e `app/api/auth/` — cadastro, login e sessão (senha com scrypt, cookie httpOnly).
 - `lib/progress-db.ts` e `app/api/progress/` — leitura e gravação do progresso no Postgres.
 - `app/entrar/` — página de login e cadastro.
+- `app/simulacao/`, `components/simulacao/` e `lib/simulacao/` — jogo "Carreira em TI": 15 fases em 5 áreas (suporte, redes, segurança, cloud, NOC). Para criar uma fase, adicione um item em `LEVELS` (`lib/simulacao/levels.ts`).
