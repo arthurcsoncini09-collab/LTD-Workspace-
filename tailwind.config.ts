@@ -1,4 +1,5 @@
 import type { Config } from 'tailwindcss';
+import defaultColors from 'tailwindcss/colors';
 
 const config: Config = {
   darkMode: ['class'],
@@ -10,8 +11,10 @@ const config: Config = {
         midnight: '#050b17',
         panel: '#0d172a',
         primary: '#3b82f6',
-        cyan: '#22d3ee',
-        emerald: '#34d399',
+        // Mantém todos os tons (cyan-300, emerald-400…) e define a cor padrão de `cyan` e `emerald`.
+        // Antes, uma string única aqui apagava os tons e classes como text-cyan-300 não geravam CSS.
+        cyan: { ...defaultColors.cyan, DEFAULT: '#22d3ee' },
+        emerald: { ...defaultColors.emerald, DEFAULT: '#34d399' },
       },
       boxShadow: {
         glow: '0 0 30px rgba(59,130,246,0.35)',
