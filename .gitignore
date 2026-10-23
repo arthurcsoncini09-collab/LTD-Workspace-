@@ -8,3 +8,7 @@ build.log
 
 # Banco SQLite gerado automaticamente a partir de lib/content (não versionar)
 db/
+
+# Variáveis de ambiente locais (contêm a senha do banco)
+.env*.local
+.env

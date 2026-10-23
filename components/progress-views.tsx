@@ -1,8 +1,8 @@
 'use client';
 
 import Link from 'next/link';
-import { ArrowRight, BrainCircuit, CheckCircle2, Clock3, Flame, RotateCcw, Target, Trophy } from 'lucide-react';
-import { computeStreak, progressActions, useProgress, type ProgressState } from './progress-store';
+import { ArrowRight, BrainCircuit, CheckCircle2, Clock3, Cloud, CloudOff, Flame, LogIn, LogOut, RotateCcw, Target, Trophy } from 'lucide-react';
+import { accountActions, computeStreak, progressActions, useAccount, useProgress, type ProgressState } from './progress-store';
 import { shortTitle, type TrailModule } from './trail-list';
 
 type Summary = Pick<TrailModule, 'slug' | 'title' | 'description' | 'stage'>;
@@ -48,6 +48,8 @@ function StatCard({ label, value, accent }: { label: string; value: string; acce
 
 export function DashboardView({ modules }: { modules: Summary[] }) {
   const stats = useStats(modules);
+  const account = useAccount();
+  const firstName = account.user?.name.split(' ')[0] ?? 'estudante';
   const upcoming = modules.filter((m) => !stats.state.completed.includes(m.slug)).slice(0, 3);
 
   return (
@@ -56,7 +58,7 @@ export function DashboardView({ modules }: { modules: Summary[] }) {
         <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
           <div>
             <div className="text-sm uppercase tracking-[0.2em] text-cyan-300">Dashboard</div>
-            <h1 className="mt-3 text-3xl font-bold text-white">Olá, estudante!</h1>
+            <h1 className="mt-3 text-3xl font-bold text-white">Olá, {firstName}!</h1>
             <p className="mt-2 text-slate-300">
               {stats.completed === 0 ? 'Comece pelo primeiro módulo e acompanhe sua evolução aqui.' : 'Continue aprendendo — cada módulo concluído aparece no seu progresso.'}
             </p>
@@ -220,24 +222,62 @@ function levelFor(completed: number, total: number) {
 
 export function ProfileView({ modules }: { modules: Summary[] }) {
   const stats = useStats(modules);
+  const account = useAccount();
+  const user = account.user;
+  const loggedIn = account.status === 'authenticated';
 
   return (
     <div className="grid gap-6 xl:grid-cols-[0.8fr_1.2fr]">
       <div className="card-surface rounded-[28px] p-6">
-        <div className="flex h-20 w-20 items-center justify-center rounded-2xl bg-gradient-to-br from-blue-500 to-cyan-400 text-2xl font-black text-slate-950">E</div>
-        <div className="mt-5 text-2xl font-bold text-white">Estudante</div>
+        <div className="flex h-20 w-20 items-center justify-center rounded-2xl bg-gradient-to-br from-blue-500 to-cyan-400 text-2xl font-black text-slate-950">
+          {(user?.name ?? 'Estudante').charAt(0).toUpperCase()}
+        </div>
+        <div className="mt-5 text-2xl font-bold text-white">{user?.name ?? 'Estudante'}</div>
+        {user ? <div className="mt-1 text-sm text-slate-400">{user.email}</div> : null}
         <div className="mt-2 text-sm text-slate-300">Nível: {levelFor(stats.completed, modules.length)}</div>
-        <p className="mt-4 text-xs text-slate-400">Seu progresso fica salvo neste navegador.</p>
-        <button
-          type="button"
-          onClick={() => {
-            if (window.confirm('Apagar todo o progresso salvo neste navegador?')) progressActions.reset();
-          }}
-          className="mt-4 inline-flex items-center gap-2 rounded-xl border border-slate-700 px-3 py-2 text-sm text-slate-300 hover:border-rose-400/60 hover:text-rose-200"
-        >
-          <RotateCcw className="h-4 w-4" />
-          Reiniciar progresso
-        </button>
+
+        <p className="mt-4 flex items-start gap-2 text-xs text-slate-400">
+          {loggedIn && !account.syncError ? <Cloud className="h-4 w-4 shrink-0 text-cyan-300" /> : null}
+          {loggedIn && account.syncError ? <CloudOff className="h-4 w-4 shrink-0 text-amber-300" /> : null}
+          {loggedIn
+            ? account.syncError
+              ? 'Não foi possível sincronizar agora. O progresso está salvo neste navegador e será enviado na próxima ação.'
+              : 'Seu progresso fica salvo na sua conta e aparece em qualquer dispositivo.'
+            : 'Seu progresso fica salvo neste navegador.'}
+        </p>
+
+        <div className="mt-4 flex flex-wrap gap-2">
+          {account.status === 'anonymous' ? (
+            <Link
+              href="/entrar?next=/perfil"
+              className="inline-flex items-center gap-2 rounded-xl border border-cyan-400/40 px-3 py-2 text-sm text-cyan-100 hover:border-cyan-300"
+            >
+              <LogIn className="h-4 w-4" />
+              Entrar para salvar na nuvem
+            </Link>
+          ) : null}
+          <button
+            type="button"
+            onClick={() => {
+              const where = loggedIn ? 'da sua conta' : 'salvo neste navegador';
+              if (window.confirm(`Apagar todo o progresso ${where}?`)) progressActions.reset();
+            }}
+            className="inline-flex items-center gap-2 rounded-xl border border-slate-700 px-3 py-2 text-sm text-slate-300 hover:border-rose-400/60 hover:text-rose-200"
+          >
+            <RotateCcw className="h-4 w-4" />
+            Reiniciar progresso
+          </button>
+          {loggedIn ? (
+            <button
+              type="button"
+              onClick={() => void accountActions.logout()}
+              className="inline-flex items-center gap-2 rounded-xl border border-slate-700 px-3 py-2 text-sm text-slate-300 hover:border-slate-500"
+            >
+              <LogOut className="h-4 w-4" />
+              Sair
+            </button>
+          ) : null}
+        </div>
       </div>
 
       <div className="card-surface rounded-[28px] p-6">

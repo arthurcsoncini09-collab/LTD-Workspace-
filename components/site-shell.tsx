@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { useEffect, useMemo, useState } from 'react';
+import { useAccount } from './progress-store';
 import {
   BookOpen,
   Briefcase,
@@ -11,6 +12,7 @@ import {
   Compass,
   Gauge,
   Layers3,
+  LogIn,
   Menu,
   Network,
   Search,
@@ -68,6 +70,29 @@ function GlobalSearch({ className = '' }: { className?: string }) {
         className="w-full min-w-0 bg-transparent text-sm text-slate-200 placeholder:text-slate-500 focus:outline-none lg:w-80"
       />
     </form>
+  );
+}
+
+/** Botão do topo: "Entrar" sem login, nome do aluno com login, "Perfil" quando o site roda sem banco. */
+function AccountButton() {
+  const account = useAccount();
+  const className = 'flex items-center gap-2 rounded-xl border border-slate-700 bg-slate-900/80 px-3 py-2 text-sm';
+
+  if (account.status === 'anonymous') {
+    return (
+      <Link href="/entrar" className={`${className} border-cyan-400/40 text-cyan-100 hover:border-cyan-300`}>
+        <LogIn className="h-4 w-4" />
+        <span className="hidden sm:inline">Entrar</span>
+      </Link>
+    );
+  }
+
+  const label = account.user ? account.user.name.split(' ')[0] : 'Perfil';
+  return (
+    <Link href="/perfil" className={className}>
+      <UserCircle2 className="h-4 w-4" />
+      <span className="hidden max-w-[10rem] truncate sm:inline">{label}</span>
+    </Link>
   );
 }
 
@@ -156,10 +181,7 @@ export function SiteShell({ children }: { children: React.ReactNode }) {
                 <Link href="/busca" aria-label="Buscar" className="rounded-xl border border-slate-700 p-2 md:hidden">
                   <Search className="h-5 w-5" />
                 </Link>
-                <Link href="/perfil" className="flex items-center gap-2 rounded-xl border border-slate-700 bg-slate-900/80 px-3 py-2 text-sm">
-                  <UserCircle2 className="h-4 w-4" />
-                  <span className="hidden sm:inline">Perfil</span>
-                </Link>
+                <AccountButton />
               </div>
             </div>
           </header>
