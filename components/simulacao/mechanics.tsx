@@ -12,9 +12,9 @@ export type MechanicProps<L> = {
   onSolved: () => void;
 };
 
-const panel = 'rounded-2xl border border-slate-800 bg-slate-950/60 p-4';
+const panel = 'rounded-xl border border-slate-800 bg-slate-950/60 p-4';
 const primaryButton =
-  'inline-flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-blue-500 to-cyan-400 px-4 py-2.5 text-sm font-semibold text-slate-950 transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-40';
+  'inline-flex items-center justify-center gap-2 rounded-lg bg-blue-600 hover:bg-blue-500 px-4 py-2.5 text-sm font-semibold text-white transition disabled:cursor-not-allowed disabled:opacity-40';
 
 function Feedback({ tone, children }: { tone: 'error' | 'success' | 'info'; children: React.ReactNode }) {
   const styles = {
@@ -23,7 +23,7 @@ function Feedback({ tone, children }: { tone: 'error' | 'success' | 'info'; chil
     info: 'border-cyan-500/30 bg-cyan-500/10 text-cyan-100',
   }[tone];
   return (
-    <div role={tone === 'error' ? 'alert' : 'status'} className={`rounded-xl border px-4 py-3 text-sm ${styles}`}>
+    <div role={tone === 'error' ? 'alert' : 'status'} className={`rounded-lg border px-4 py-3 text-sm ${styles}`}>
       {children}
     </div>
   );
@@ -65,7 +65,7 @@ export function DiagnoseMechanic({ level, solved, onMistake, onSolved }: Mechani
         </div>
         <div
           ref={terminalRef}
-          className="soft-scrollbar h-80 overflow-y-auto rounded-2xl border border-slate-800 bg-black/70 p-4 font-mono text-xs leading-relaxed text-slate-200"
+          className="soft-scrollbar h-80 overflow-y-auto rounded-xl border border-slate-800 bg-black/70 p-4 font-mono text-xs leading-relaxed text-slate-200"
           aria-live="polite"
         >
           {history.length === 0 ? <div className="text-slate-500">Nenhum comando executado ainda.</div> : null}
@@ -109,7 +109,7 @@ export function DiagnoseMechanic({ level, solved, onMistake, onSolved }: Mechani
                     onMistake();
                   }
                 }}
-                className={`flex w-full items-start gap-3 rounded-xl border px-4 py-3 text-left text-sm transition disabled:cursor-not-allowed ${
+                className={`flex w-full items-start gap-3 rounded-lg border px-4 py-3 text-left text-sm transition disabled:cursor-not-allowed ${
                   isRight
                     ? 'border-emerald-400/50 bg-emerald-500/10 text-emerald-100'
                     : isWrong
@@ -164,7 +164,7 @@ export function ConfigMechanic({ level, solved, onMistake, onSolved }: MechanicP
                 disabled={solved}
                 autoComplete="off"
                 spellCheck={false}
-                className="w-full rounded-xl border border-slate-700 bg-slate-900 px-3 py-2.5 font-mono text-white placeholder:text-slate-600 focus:border-cyan-400/60 focus:outline-none disabled:opacity-70"
+                className="w-full rounded-lg border border-slate-700 bg-slate-900 px-3 py-2.5 font-mono text-white placeholder:text-slate-600 focus:border-cyan-400/60 focus:outline-none disabled:opacity-70"
               />
               {field.prefix ? <span className="font-mono text-slate-400">{field.prefix}</span> : null}
             </div>
@@ -244,7 +244,7 @@ export function ClassifyMechanic({ level, solved, onMistake, onSolved }: Mechani
             setSelected(id);
           } else setSelected(isSelected ? null : id);
         }}
-        className={`flex w-full items-center gap-2 rounded-xl border px-3 py-2 text-left text-sm transition ${
+        className={`flex w-full items-center gap-2 rounded-lg border px-3 py-2 text-left text-sm transition ${
           isLocked
             ? 'border-emerald-400/40 bg-emerald-500/10 text-emerald-100'
             : isSelected
@@ -263,7 +263,7 @@ export function ClassifyMechanic({ level, solved, onMistake, onSolved }: Mechani
       <p className="text-sm text-slate-300">{level.instruction}</p>
       {!solved ? (
         <div className={panel}>
-          <div className="mb-3 text-xs uppercase tracking-[0.2em] text-slate-400">
+          <div className="mb-3 text-xs font-medium uppercase tracking-[0.08em] text-slate-400">
             Itens para posicionar {selected ? '— agora clique no grupo de destino' : ''}
           </div>
           {pool.length ? (
@@ -287,7 +287,7 @@ export function ClassifyMechanic({ level, solved, onMistake, onSolved }: Mechani
                 place(bucket.id);
               }
             }}
-            className={`min-h-[140px] rounded-2xl border-2 border-dashed p-4 transition ${
+            className={`min-h-[140px] rounded-xl border-2 border-dashed p-4 transition ${
               selected ? 'cursor-pointer border-cyan-400/60 bg-cyan-400/5 hover:bg-cyan-400/10' : 'border-slate-700 bg-slate-950/40'
             }`}
           >
@@ -350,7 +350,7 @@ export function FirewallMechanic({ level, solved, onMistake, onSolved }: Mechani
         </ul>
       </div>
 
-      <div className="overflow-x-auto rounded-2xl border border-slate-800">
+      <div className="overflow-x-auto rounded-xl border border-slate-800">
         <table className="w-full min-w-[640px] text-left text-sm">
           <thead className="bg-slate-900/80 text-xs uppercase tracking-wider text-slate-400">
             <tr>
@@ -468,7 +468,7 @@ export function LogsMechanic({ level, solved, onMistake, onSolved }: MechanicPro
   return (
     <div className="space-y-5">
       <p className="text-sm text-slate-300">{level.instruction}</p>
-      <div className="overflow-hidden rounded-2xl border border-slate-800 bg-black/70">
+      <div className="overflow-hidden rounded-xl border border-slate-800 bg-black/70">
         <div className="border-b border-slate-800 bg-slate-900/80 px-4 py-2 font-mono text-xs text-slate-400">{level.file}</div>
         <div className="divide-y divide-slate-900">
           {level.lines.map((line) => {
@@ -554,7 +554,7 @@ export function SequenceMechanic({ level, solved, onMistake, onSolved }: Mechani
           return (
             <li
               key={step.id}
-              className={`flex items-center gap-3 rounded-xl border px-3 py-3 text-sm transition ${
+              className={`flex items-center gap-3 rounded-lg border px-3 py-3 text-sm transition ${
                 state === 'ok'
                   ? 'border-emerald-400/40 bg-emerald-500/10 text-emerald-50'
                   : state === 'bad'

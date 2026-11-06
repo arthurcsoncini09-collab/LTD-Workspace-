@@ -4,6 +4,8 @@ import Link from 'next/link';
 import { ArrowRight, BrainCircuit, CheckCircle2, Clock3, Cloud, CloudOff, Flame, LogIn, LogOut, RotateCcw, Target, Trophy } from 'lucide-react';
 import { accountActions, computeStreak, progressActions, useAccount, useProgress, type ProgressState } from './progress-store';
 import { shortTitle, type TrailModule } from './trail-list';
+import { PageHeader } from './ui/card';
+import { buttonVariants } from './ui/button';
 
 type Summary = Pick<TrailModule, 'slug' | 'title' | 'description' | 'stage'>;
 
@@ -37,11 +39,15 @@ function useStats(modules: Summary[]) {
   };
 }
 
-function StatCard({ label, value, accent }: { label: string; value: string; accent: string }) {
+function StatCard({ label, value, icon: Icon, hint }: { label: string; value: string; icon: typeof Target; hint: string }) {
   return (
-    <div className="card-surface rounded-2xl p-5">
-      <div className="text-sm text-slate-400">{label}</div>
-      <div className={`mt-3 text-3xl font-bold ${accent}`}>{value}</div>
+    <div className="card-surface rounded-xl p-5">
+      <div className="flex items-center justify-between text-sm text-muted-foreground">
+        {label}
+        <Icon className="h-4 w-4 text-slate-500" />
+      </div>
+      <div className="mt-2 text-3xl font-semibold tracking-tight text-white">{value}</div>
+      <div className="mt-1 text-xs text-slate-500">{hint}</div>
     </div>
   );
 }
@@ -54,44 +60,38 @@ export function DashboardView({ modules }: { modules: Summary[] }) {
 
   return (
     <div className="space-y-8">
-      <section className="card-surface rounded-[28px] p-6 sm:p-8">
-        <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-          <div>
-            <div className="text-sm uppercase tracking-[0.2em] text-cyan-300">Dashboard</div>
-            <h1 className="mt-3 text-3xl font-bold text-white">Olá, {firstName}!</h1>
-            <p className="mt-2 text-slate-300">
-              {stats.completed === 0 ? 'Comece pelo primeiro módulo e acompanhe sua evolução aqui.' : 'Continue aprendendo — cada módulo concluído aparece no seu progresso.'}
-            </p>
-          </div>
-          {stats.continueModule ? (
-            <Link
-              href={`/aulas/${stats.continueModule.slug}`}
-              className="rounded-2xl border border-blue-500/30 bg-blue-500/10 px-4 py-3 text-sm text-blue-200 transition hover:border-blue-400/60"
-            >
-              {stats.state.lastVisited === stats.continueModule.slug ? 'Continuar: ' : 'Próximo módulo: '}
-              <span className="font-semibold">{shortTitle(stats.continueModule.title)}</span>
+      <PageHeader
+        eyebrow="Dashboard"
+        title={`Olá, ${firstName}!`}
+        description={stats.completed === 0 ? 'Comece pelo primeiro módulo e acompanhe sua evolução aqui.' : 'Continue aprendendo — cada módulo concluído aparece no seu progresso.'}
+        actions={
+          stats.continueModule ? (
+            <Link href={`/aulas/${stats.continueModule.slug}`} className={buttonVariants({ size: 'lg' })}>
+              {stats.state.lastVisited === stats.continueModule.slug ? 'Continuar: ' : 'Próximo: '}
+              {shortTitle(stats.continueModule.title)}
+              <ArrowRight />
             </Link>
           ) : (
-            <div className="rounded-2xl border border-emerald-500/30 bg-emerald-500/10 px-4 py-3 text-sm text-emerald-200">Todos os módulos concluídos! 🎉</div>
-          )}
-        </div>
-      </section>
+            <div className="rounded-lg border border-emerald-500/30 bg-emerald-500/10 px-4 py-2.5 text-sm text-emerald-200">Todos os módulos concluídos! 🎉</div>
+          )
+        }
+      />
 
-      <section className="grid gap-5 md:grid-cols-2 xl:grid-cols-4">
-        <StatCard label="Módulos concluídos" value={`${stats.completed}/${modules.length}`} accent="text-cyan-300" />
-        <StatCard label="Sequência de estudo" value={`${stats.streak} ${stats.streak === 1 ? 'dia' : 'dias'}`} accent="text-emerald-300" />
-        <StatCard label="Taxa de acertos" value={stats.accuracy === null ? '—' : `${stats.accuracy}%`} accent="text-blue-300" />
-        <StatCard label="Quizzes realizados" value={String(stats.quizzesDone)} accent="text-violet-300" />
+      <section className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+        <StatCard label="Módulos concluídos" value={`${stats.completed}/${modules.length}`} icon={CheckCircle2} hint="Marcados como concluídos" />
+        <StatCard label="Sequência de estudo" value={`${stats.streak} ${stats.streak === 1 ? 'dia' : 'dias'}`} icon={Flame} hint="Dias seguidos estudando" />
+        <StatCard label="Taxa de acertos" value={stats.accuracy === null ? '—' : `${stats.accuracy}%`} icon={Target} hint="Média de todos os quizzes" />
+        <StatCard label="Quizzes realizados" value={String(stats.quizzesDone)} icon={BrainCircuit} hint={`De ${modules.length} disponíveis`} />
       </section>
 
       <section className="grid gap-6 xl:grid-cols-[1.4fr_0.6fr]">
-        <div className="card-surface rounded-[28px] p-6">
+        <div className="card-surface rounded-xl p-6">
           <div className="mb-6 flex items-center justify-between">
             <div>
-              <div className="text-sm uppercase tracking-[0.2em] text-cyan-300">Progresso</div>
-              <h2 className="mt-2 text-2xl font-bold text-white">Curso: Fundamentos de Redes</h2>
+              <div className="text-xs font-medium uppercase tracking-[0.08em] text-blue-400">Progresso</div>
+              <h2 className="mt-2 text-xl font-semibold text-white">Curso: Fundamentos de Redes</h2>
             </div>
-            <div className="text-2xl font-bold text-cyan-300">{stats.overall}%</div>
+            <div className="text-2xl font-semibold tracking-tight text-white">{stats.overall}%</div>
           </div>
           <div className="progress-bar mb-4" role="progressbar" aria-valuenow={stats.overall} aria-valuemin={0} aria-valuemax={100}>
             <span style={{ width: `${stats.overall}%` }} />
@@ -102,21 +102,21 @@ export function DashboardView({ modules }: { modules: Summary[] }) {
               { icon: Target, label: 'Quizzes feitos', value: `${stats.quizzesDone}/${modules.length}` },
               { icon: Trophy, label: 'Quizzes com 70%+', value: String(Object.values(stats.state.quizScores).filter((s) => s.correct / s.total >= 0.7).length) },
             ].map(({ icon: Icon, label, value }) => (
-              <div key={label} className="rounded-2xl border border-slate-800 bg-slate-950/60 p-4">
-                <Icon className="h-5 w-5 text-cyan-300" />
-                <div className="mt-3 text-2xl font-bold text-white">{value}</div>
+              <div key={label} className="rounded-xl border border-slate-800 bg-slate-950/60 p-4">
+                <Icon className="h-4 w-4 text-slate-500" />
+                <div className="mt-3 text-2xl font-semibold tracking-tight text-white">{value}</div>
                 <div className="text-sm text-slate-400">{label}</div>
               </div>
             ))}
           </div>
         </div>
 
-        <div className="card-surface rounded-[28px] p-6">
-          <div className="mb-4 flex items-center gap-2 text-cyan-300">
+        <div className="card-surface rounded-xl p-6">
+          <div className="mb-4 flex items-center gap-2 text-blue-400">
             <Flame className="h-5 w-5" />
-            <span className="text-sm uppercase tracking-[0.2em]">Streak</span>
+            <span className="text-xs font-medium uppercase tracking-[0.08em]">Streak</span>
           </div>
-          <div className="text-4xl font-black text-white">
+          <div className="text-4xl font-semibold tracking-tight text-white">
             {stats.streak} {stats.streak === 1 ? 'dia' : 'dias'}
           </div>
           <p className="mt-3 text-slate-300">Estude um pouco todos os dias para manter a sequência.</p>
@@ -125,7 +125,7 @@ export function DashboardView({ modules }: { modules: Summary[] }) {
               .filter((m) => stats.state.completed.includes(m.slug))
               .slice(-3)
               .map((m) => (
-                <div key={m.slug} className="flex items-center justify-between rounded-xl border border-slate-800 bg-slate-950/60 px-3 py-2 text-sm">
+                <div key={m.slug} className="flex items-center justify-between rounded-lg border border-slate-800 bg-slate-950/60 px-3 py-2 text-sm">
                   <span>{shortTitle(m.title)}</span>
                   <span className="text-emerald-300">✓</span>
                 </div>
@@ -135,8 +135,8 @@ export function DashboardView({ modules }: { modules: Summary[] }) {
       </section>
 
       <section className="grid gap-6 xl:grid-cols-[0.9fr_1.1fr]">
-        <div className="card-surface rounded-[28px] p-6">
-          <div className="mb-4 flex items-center gap-2 text-sm uppercase tracking-[0.2em] text-cyan-300">
+        <div className="card-surface rounded-xl p-6">
+          <div className="mb-4 flex items-center gap-2 text-xs font-medium uppercase tracking-[0.08em] text-blue-400">
             <Clock3 className="h-4 w-4" />
             Próximos módulos
           </div>
@@ -146,18 +146,18 @@ export function DashboardView({ modules }: { modules: Summary[] }) {
               <Link
                 key={m.slug}
                 href={`/aulas/${m.slug}`}
-                className="flex items-center justify-between rounded-2xl border border-slate-800 bg-slate-950/60 p-3 text-sm text-slate-200 hover:border-cyan-400/50"
+                className="flex items-center justify-between rounded-xl border border-slate-800 bg-slate-950/60 p-3 text-sm text-slate-200 hover:border-cyan-400/50"
               >
                 {shortTitle(m.title)}
-                <span className="text-cyan-300">Estudar</span>
+                <span className="text-blue-400">Estudar</span>
               </Link>
             ))}
           </div>
         </div>
 
-        <div className="card-surface rounded-[28px] p-6">
-          <div className="text-sm uppercase tracking-[0.2em] text-cyan-300">Prática</div>
-          <h3 className="mt-2 text-2xl font-bold text-white">Continuar com exercícios</h3>
+        <div className="card-surface rounded-xl p-6">
+          <div className="text-xs font-medium uppercase tracking-[0.08em] text-blue-400">Prática</div>
+          <h3 className="mt-2 text-2xl font-semibold tracking-tight text-white">Continuar com exercícios</h3>
           <div className="mt-6 grid gap-4 sm:grid-cols-2">
             {[
               { topic: 'Subnetting Lab', level: 'Intermediário', href: '/labs/subnetting' },
@@ -165,10 +165,10 @@ export function DashboardView({ modules }: { modules: Summary[] }) {
               { topic: 'Packet Journey', level: 'Iniciante', href: '/labs/packet-journey' },
               { topic: 'Quizzes por módulo', level: 'Todos os níveis', href: '/quizzes' },
             ].map(({ topic, level, href }) => (
-              <Link key={topic} href={href} className="rounded-2xl border border-slate-800 bg-slate-950/60 p-4 transition hover:border-cyan-400/50">
+              <Link key={topic} href={href} className="rounded-xl border border-slate-800 bg-slate-950/60 p-4 transition hover:border-cyan-400/50">
                 <div className="text-lg font-semibold text-white">{topic}</div>
                 <div className="mt-2 text-sm text-slate-400">Dificuldade: {level}</div>
-                <span className="mt-4 inline-flex items-center gap-2 text-sm font-medium text-cyan-300">
+                <span className="mt-4 inline-flex items-center gap-2 text-sm font-medium text-blue-400">
                   Praticar <ArrowRight className="h-4 w-4" />
                 </span>
               </Link>
@@ -184,7 +184,7 @@ export function ProgressView({ modules }: { modules: Summary[] }) {
   const stats = useStats(modules);
 
   return (
-    <div className="card-surface rounded-[28px] p-6">
+    <div className="card-surface rounded-xl p-6">
       <div className="mb-6 flex flex-wrap items-center justify-between gap-3 text-sm text-slate-300">
         <span>Progresso geral: {stats.overall}%</span>
         <span>Cada módulo: 50% ao marcar como concluído + 50% pela melhor nota do quiz.</span>
@@ -228,16 +228,16 @@ export function ProfileView({ modules }: { modules: Summary[] }) {
 
   return (
     <div className="grid gap-6 xl:grid-cols-[0.8fr_1.2fr]">
-      <div className="card-surface rounded-[28px] p-6">
-        <div className="flex h-20 w-20 items-center justify-center rounded-2xl bg-gradient-to-br from-blue-500 to-cyan-400 text-2xl font-black text-slate-950">
+      <div className="card-surface rounded-xl p-6">
+        <div className="flex h-20 w-20 items-center justify-center rounded-xl bg-blue-600 hover:bg-blue-500 text-2xl font-semibold tracking-tight text-white">
           {(user?.name ?? 'Estudante').charAt(0).toUpperCase()}
         </div>
-        <div className="mt-5 text-2xl font-bold text-white">{user?.name ?? 'Estudante'}</div>
+        <div className="mt-5 text-2xl font-semibold tracking-tight text-white">{user?.name ?? 'Estudante'}</div>
         {user ? <div className="mt-1 text-sm text-slate-400">{user.email}</div> : null}
         <div className="mt-2 text-sm text-slate-300">Nível: {levelFor(stats.completed, modules.length)}</div>
 
         <p className="mt-4 flex items-start gap-2 text-xs text-slate-400">
-          {loggedIn && !account.syncError ? <Cloud className="h-4 w-4 shrink-0 text-cyan-300" /> : null}
+          {loggedIn && !account.syncError ? <Cloud className="h-4 w-4 shrink-0 text-blue-400" /> : null}
           {loggedIn && account.syncError ? <CloudOff className="h-4 w-4 shrink-0 text-amber-300" /> : null}
           {loggedIn
             ? account.syncError
@@ -250,7 +250,7 @@ export function ProfileView({ modules }: { modules: Summary[] }) {
           {account.status === 'anonymous' ? (
             <Link
               href="/entrar?next=/perfil"
-              className="inline-flex items-center gap-2 rounded-xl border border-cyan-400/40 px-3 py-2 text-sm text-cyan-100 hover:border-cyan-300"
+              className="inline-flex items-center gap-2 rounded-lg border border-cyan-400/40 px-3 py-2 text-sm text-cyan-100 hover:border-cyan-300"
             >
               <LogIn className="h-4 w-4" />
               Entrar para salvar na nuvem
@@ -262,7 +262,7 @@ export function ProfileView({ modules }: { modules: Summary[] }) {
               const where = loggedIn ? 'da sua conta' : 'salvo neste navegador';
               if (window.confirm(`Apagar todo o progresso ${where}?`)) progressActions.reset();
             }}
-            className="inline-flex items-center gap-2 rounded-xl border border-slate-700 px-3 py-2 text-sm text-slate-300 hover:border-rose-400/60 hover:text-rose-200"
+            className="inline-flex items-center gap-2 rounded-lg border border-slate-700 px-3 py-2 text-sm text-slate-300 hover:border-rose-400/60 hover:text-rose-200"
           >
             <RotateCcw className="h-4 w-4" />
             Reiniciar progresso
@@ -271,7 +271,7 @@ export function ProfileView({ modules }: { modules: Summary[] }) {
             <button
               type="button"
               onClick={() => void accountActions.logout()}
-              className="inline-flex items-center gap-2 rounded-xl border border-slate-700 px-3 py-2 text-sm text-slate-300 hover:border-slate-500"
+              className="inline-flex items-center gap-2 rounded-lg border border-slate-700 px-3 py-2 text-sm text-slate-300 hover:border-slate-500"
             >
               <LogOut className="h-4 w-4" />
               Sair
@@ -280,7 +280,7 @@ export function ProfileView({ modules }: { modules: Summary[] }) {
         </div>
       </div>
 
-      <div className="card-surface rounded-[28px] p-6">
+      <div className="card-surface rounded-xl p-6">
         <div className="grid gap-4 md:grid-cols-2">
           {[
             ['Progresso geral', `${stats.overall}%`],
@@ -288,13 +288,13 @@ export function ProfileView({ modules }: { modules: Summary[] }) {
             ['Taxa de acertos', stats.accuracy === null ? '—' : `${stats.accuracy}%`],
             ['Módulos concluídos', `${stats.completed}/${modules.length}`],
           ].map(([label, value]) => (
-            <div key={label} className="rounded-2xl border border-slate-800 bg-slate-950/60 p-4">
+            <div key={label} className="rounded-xl border border-slate-800 bg-slate-950/60 p-4">
               <div className="text-sm text-slate-400">{label}</div>
-              <div className="mt-2 text-2xl font-bold text-white">{value}</div>
+              <div className="mt-2 text-2xl font-semibold tracking-tight text-white">{value}</div>
             </div>
           ))}
         </div>
-        <Link href="/quizzes" className="mt-6 inline-flex items-center gap-2 text-sm font-medium text-cyan-300 hover:text-cyan-200">
+        <Link href="/quizzes" className="mt-6 inline-flex items-center gap-2 text-sm font-medium text-blue-400 hover:text-blue-300">
           <BrainCircuit className="h-4 w-4" />
           Fazer quizzes para melhorar a taxa de acertos
         </Link>

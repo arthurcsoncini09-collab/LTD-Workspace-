@@ -58,17 +58,17 @@ export default function NetworkSimulatorPage() {
 
   return (
     <div className="space-y-8">
-      <section className="card-surface rounded-[28px] p-6 sm:p-8">
-        <div className="text-sm uppercase tracking-[0.2em] text-cyan-300">Mini Lab de Rede</div>
-        <h1 className="mt-3 text-3xl font-bold text-white">Simulador de rede</h1>
+      <section className="card-surface rounded-xl p-6 sm:p-8">
+        <div className="text-xs font-medium uppercase tracking-[0.08em] text-blue-400">Mini Lab de Rede</div>
+        <h1 className="mt-3 text-3xl font-semibold tracking-tight text-white">Simulador de rede</h1>
         <p className="mt-3 max-w-2xl text-slate-300">
           Configure o PC1 e faça ping. O pacote percorre a topologia passo a passo — e, se algo estiver errado, o simulador mostra onde e por quê.
         </p>
       </section>
 
       <div className="grid grid-cols-1 gap-6 xl:grid-cols-[0.75fr_1.25fr]">
-        <div className="card-surface h-fit space-y-4 rounded-[28px] p-6">
-          <h2 className="text-sm uppercase tracking-[0.2em] text-cyan-300">Configurar IP do PC1</h2>
+        <div className="card-surface h-fit space-y-4 rounded-xl p-6">
+          <h2 className="text-xs font-medium uppercase tracking-[0.08em] text-blue-400">Configurar IP do PC1</h2>
           {(
             [
               ['ip', 'Endereço IP', '192.168.1.10'],
@@ -86,7 +86,7 @@ export default function NetworkSimulatorPage() {
                 onChange={update(field)}
                 placeholder={placeholder}
                 autoComplete="off"
-                className="w-full rounded-xl border border-slate-700 bg-slate-900 px-3 py-2.5 font-mono text-sm text-white placeholder:text-slate-500"
+                className="w-full rounded-lg border border-slate-700 bg-slate-900 px-3 py-2.5 font-mono text-sm text-white placeholder:text-slate-500"
               />
             </div>
           ))}
@@ -96,7 +96,7 @@ export default function NetworkSimulatorPage() {
               type="button"
               onClick={() => startPing('server')}
               disabled={running}
-              className="rounded-xl bg-gradient-to-r from-blue-500 to-cyan-400 px-4 py-2.5 text-sm font-semibold text-slate-950 disabled:opacity-50"
+              className="rounded-lg bg-blue-600 hover:bg-blue-500 px-4 py-2.5 text-sm font-semibold text-white disabled:opacity-50"
             >
               ping {TOPOLOGY.server}
             </button>
@@ -104,14 +104,14 @@ export default function NetworkSimulatorPage() {
               type="button"
               onClick={() => startPing('pc2')}
               disabled={running}
-              className="rounded-xl border border-slate-600 px-4 py-2.5 text-sm font-semibold text-slate-100 disabled:opacity-50"
+              className="rounded-lg border border-slate-600 px-4 py-2.5 text-sm font-semibold text-slate-100 disabled:opacity-50"
             >
               ping {TOPOLOGY.pc2}
             </button>
           </div>
 
           <div>
-            <div className="mb-2 text-xs uppercase tracking-[0.2em] text-slate-400">Cenários prontos</div>
+            <div className="mb-2 text-xs font-medium uppercase tracking-[0.08em] text-slate-400">Cenários prontos</div>
             <div className="flex flex-wrap gap-2">
               {presets.map((preset) => (
                 <button
@@ -131,8 +131,8 @@ export default function NetworkSimulatorPage() {
           </div>
         </div>
 
-        <div className="card-surface space-y-5 rounded-[28px] p-4 sm:p-6">
-          <div className="overflow-hidden rounded-[24px] border border-slate-800 bg-slate-950/60">
+        <div className="card-surface space-y-5 rounded-xl p-4 sm:p-6">
+          <div className="overflow-hidden rounded-xl border border-slate-800 bg-slate-950/60">
             <svg viewBox="0 0 800 330" className="h-auto w-full" role="img" aria-label="Topologia: PC1 e PC2 no switch, switch no roteador, roteador no servidor">
               {links.map(([a, b]) => (
                 <line key={`${a}-${b}`} x1={nodes[a].x} y1={nodes[a].y} x2={nodes[b].x} y2={nodes[b].y} stroke="#22d3ee" strokeOpacity={0.5} strokeWidth={3} />
@@ -179,11 +179,11 @@ export default function NetworkSimulatorPage() {
             </svg>
           </div>
 
-          <div className="rounded-2xl border border-slate-800 bg-slate-950/80 p-4 font-mono text-sm" role="log" aria-live="polite">
+          <div className="rounded-xl border border-slate-800 bg-slate-950/80 p-4 font-mono text-sm" role="log" aria-live="polite">
             {!result ? <div className="text-slate-400">Clique em um dos botões de ping para começar.</div> : null}
             {result?.steps.slice(0, visibleSteps).map((step, index) => (
               <div key={index} className="py-0.5 text-slate-200">
-                <span className="text-cyan-300">[{nodes[step.at].label}]</span> {step.message}
+                <span className="text-blue-400">[{nodes[step.at].label}]</span> {step.message}
               </div>
             ))}
           </div>
@@ -191,7 +191,7 @@ export default function NetworkSimulatorPage() {
           {result && !running ? (
             <div
               role="status"
-              className={`flex items-start gap-3 rounded-2xl border p-4 text-sm ${
+              className={`flex items-start gap-3 rounded-xl border p-4 text-sm ${
                 result.ok ? 'border-emerald-500/30 bg-emerald-500/10 text-emerald-100' : 'border-rose-500/30 bg-rose-500/10 text-rose-100'
               }`}
             >

@@ -25,7 +25,7 @@ import { simActions, type SimProgress } from './sim-progress';
 function Swatches({ colors, value, onChange, label }: { colors: string[]; value: string; onChange: (c: string) => void; label: string }) {
   return (
     <fieldset>
-      <legend className="mb-2 text-xs uppercase tracking-[0.2em] text-slate-400">{label}</legend>
+      <legend className="mb-2 text-xs font-medium uppercase tracking-[0.08em] text-slate-400">{label}</legend>
       <div className="flex flex-wrap gap-2">
         {colors.map((color) => (
           <button
@@ -46,7 +46,7 @@ function Swatches({ colors, value, onChange, label }: { colors: string[]; value:
 function Choices<T extends string>({ options, value, onChange, label }: { options: { id: T; label: string }[]; value: T; onChange: (v: T) => void; label: string }) {
   return (
     <fieldset>
-      <legend className="mb-2 text-xs uppercase tracking-[0.2em] text-slate-400">{label}</legend>
+      <legend className="mb-2 text-xs font-medium uppercase tracking-[0.08em] text-slate-400">{label}</legend>
       <div className="flex flex-wrap gap-2">
         {options.map((option) => (
           <button
@@ -72,11 +72,11 @@ export function CharacterCreator({ initial, onDone }: { initial?: PlayerProfile;
   const set = <K extends keyof AvatarLook>(key: K) => (value: AvatarLook[K]) => setLook((l) => ({ ...l, [key]: value }));
 
   return (
-    <section className="card-surface rounded-[28px] p-6 sm:p-8" aria-labelledby="criar-personagem">
+    <section className="card-surface rounded-xl p-6 sm:p-8" aria-labelledby="criar-personagem">
       <div className="flex items-start justify-between gap-4">
         <div>
-          <div className="text-sm uppercase tracking-[0.2em] text-cyan-300">Seu personagem</div>
-          <h2 id="criar-personagem" className="mt-2 text-2xl font-bold text-white">
+          <div className="text-xs font-medium uppercase tracking-[0.08em] text-blue-400">Seu personagem</div>
+          <h2 id="criar-personagem" className="mt-2 text-2xl font-semibold tracking-tight text-white">
             {initial ? 'Editar personagem' : 'Quem é o(a) novo(a) estagiário(a)?'}
           </h2>
           <p className="mt-2 text-sm text-slate-300">Os mentores vão te chamar pelo nome durante a carreira.</p>
@@ -113,7 +113,7 @@ export function CharacterCreator({ initial, onDone }: { initial?: PlayerProfile;
               onChange={(e) => setName(e.target.value)}
               maxLength={24}
               placeholder="Como você quer ser chamado(a)?"
-              className="mt-2 w-full rounded-xl border border-slate-700 bg-slate-900 px-3 py-2.5 text-white placeholder:text-slate-600 focus:border-cyan-400/60 focus:outline-none"
+              className="mt-2 w-full rounded-lg border border-slate-700 bg-slate-900 px-3 py-2.5 text-white placeholder:text-slate-600 focus:border-cyan-400/60 focus:outline-none"
             />
           </label>
           <Swatches label="Tom de pele" colors={PLAYER_SKINS} value={look.skin} onChange={set('skin')} />
@@ -125,13 +125,13 @@ export function CharacterCreator({ initial, onDone }: { initial?: PlayerProfile;
             <button
               type="submit"
               disabled={!name.trim()}
-              className="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-blue-500 to-cyan-400 px-4 py-2.5 text-sm font-semibold text-slate-950 hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-40"
+              className="inline-flex items-center gap-2 rounded-lg bg-blue-600 hover:bg-blue-500 px-4 py-2.5 text-sm font-semibold text-white disabled:cursor-not-allowed disabled:opacity-40"
             >
               <Check className="h-4 w-4" />
               {initial ? 'Salvar' : 'Criar personagem'}
             </button>
             {!initial ? (
-              <button type="button" onClick={onDone} className="rounded-xl border border-slate-700 px-4 py-2.5 text-sm text-slate-300 hover:border-slate-500">
+              <button type="button" onClick={onDone} className="rounded-lg border border-slate-700 px-4 py-2.5 text-sm text-slate-300 hover:border-slate-500">
                 Agora não
               </button>
             ) : null}
@@ -168,7 +168,7 @@ export function CastGallery({ progress }: { progress: SimProgress }) {
   const mentorArea = (id: CharacterId) => AREAS.find((a) => a.mentor === id);
 
   return (
-    <section className="card-surface rounded-[28px] p-6" aria-labelledby="personagens">
+    <section className="card-surface rounded-xl p-6" aria-labelledby="personagens">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div className="flex items-center gap-3">
           <Users className="h-5 w-5 text-cyan-300" />
@@ -183,7 +183,7 @@ export function CastGallery({ progress }: { progress: SimProgress }) {
 
       {(['mentor', 'colega', 'sistema'] as const).map((kind) => (
         <div key={kind} className="mt-5">
-          <div className="mb-3 text-xs uppercase tracking-[0.2em] text-slate-400">{KIND_TITLE[kind]}</div>
+          <div className="mb-3 text-xs font-medium uppercase tracking-[0.08em] text-slate-400">{KIND_TITLE[kind]}</div>
           <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
             {all
               .filter((c) => c.kind === kind)
@@ -196,7 +196,7 @@ export function CastGallery({ progress }: { progress: SimProgress }) {
                     disabled={!known}
                     onClick={() => setSelected(selected === c.id ? null : c.id)}
                     aria-pressed={selected === c.id}
-                    className={`flex flex-col items-center gap-2 rounded-2xl border p-3 text-center transition ${
+                    className={`flex flex-col items-center gap-2 rounded-xl border p-3 text-center transition ${
                       selected === c.id
                         ? 'border-cyan-300 bg-cyan-400/10'
                         : known
@@ -224,7 +224,7 @@ export function CastGallery({ progress }: { progress: SimProgress }) {
       ))}
 
       {current ? (
-        <div className="mt-5 flex gap-4 rounded-2xl border border-slate-800 bg-slate-950/60 p-4" aria-live="polite">
+        <div className="mt-5 flex gap-4 rounded-xl border border-slate-800 bg-slate-950/60 p-4" aria-live="polite">
           <Avatar character={current} size={72} />
           <div>
             <div className="font-semibold text-white">{current.name}</div>

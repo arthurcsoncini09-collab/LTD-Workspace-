@@ -38,13 +38,13 @@ export default function PacketJourneyPage() {
 
   return (
     <div className="space-y-8">
-      <section className="card-surface rounded-[28px] p-6 sm:p-8">
-        <div className="text-sm uppercase tracking-[0.2em] text-cyan-300">Packet Journey</div>
-        <h1 className="mt-3 text-3xl font-bold text-white">A viagem do pacote pela rede</h1>
+      <section className="card-surface rounded-xl p-6 sm:p-8">
+        <div className="text-xs font-medium uppercase tracking-[0.08em] text-blue-400">Packet Journey</div>
+        <h1 className="mt-3 text-3xl font-semibold tracking-tight text-white">A viagem do pacote pela rede</h1>
         <p className="mt-3 max-w-2xl text-slate-300">Acompanhe, etapa por etapa, tudo o que acontece quando você abre um site. Clique em uma etapa ou use os controles.</p>
       </section>
 
-      <div className="card-surface rounded-[28px] p-6">
+      <div className="card-surface rounded-xl p-6">
         <div className="mb-2 flex items-center justify-between text-sm text-slate-400">
           <span>
             Etapa {step + 1} de {journey.length}
@@ -54,11 +54,11 @@ export default function PacketJourneyPage() {
         <div className="progress-bar mb-6">
           <span style={{ width: `${((step + 1) / journey.length) * 100}%` }} />
         </div>
-        <h2 className="text-2xl font-bold text-white">{current.title}</h2>
+        <h2 className="text-2xl font-semibold tracking-tight text-white">{current.title}</h2>
         <p className="mt-3 max-w-3xl leading-relaxed text-slate-200" aria-live="polite">
           {current.text}
         </p>
-        <Link href={`/aulas/${current.module}`} className="mt-3 inline-block text-sm text-cyan-300 hover:text-cyan-200">
+        <Link href={`/aulas/${current.module}`} className="mt-3 inline-block text-sm text-blue-400 hover:text-blue-300">
           Estudar este tema →
         </Link>
         <div className="mt-6 flex flex-wrap gap-3">
@@ -66,7 +66,7 @@ export default function PacketJourneyPage() {
             type="button"
             onClick={() => setStep((s) => Math.max(0, s - 1))}
             disabled={step === 0}
-            className="inline-flex items-center gap-1 rounded-xl border border-slate-600 px-4 py-2 text-sm text-slate-100 disabled:opacity-40"
+            className="inline-flex items-center gap-1 rounded-lg border border-slate-600 px-4 py-2 text-sm text-slate-100 disabled:opacity-40"
           >
             <ChevronLeft className="h-4 w-4" /> Anterior
           </button>
@@ -76,7 +76,7 @@ export default function PacketJourneyPage() {
               if (step >= journey.length - 1) setStep(0);
               setPlaying((p) => !p);
             }}
-            className="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-blue-500 to-cyan-400 px-4 py-2 text-sm font-semibold text-slate-950"
+            className="inline-flex items-center gap-2 rounded-lg bg-blue-600 hover:bg-blue-500 px-4 py-2 text-sm font-semibold text-white"
           >
             {playing ? <Pause className="h-4 w-4" /> : <Play className="h-4 w-4" />}
             {playing ? 'Pausar' : 'Reproduzir'}
@@ -85,14 +85,14 @@ export default function PacketJourneyPage() {
             type="button"
             onClick={() => setStep((s) => Math.min(journey.length - 1, s + 1))}
             disabled={step === journey.length - 1}
-            className="inline-flex items-center gap-1 rounded-xl border border-slate-600 px-4 py-2 text-sm text-slate-100 disabled:opacity-40"
+            className="inline-flex items-center gap-1 rounded-lg border border-slate-600 px-4 py-2 text-sm text-slate-100 disabled:opacity-40"
           >
             Próxima <ChevronRight className="h-4 w-4" />
           </button>
         </div>
       </div>
 
-      <div className="card-surface rounded-[28px] p-6">
+      <div className="card-surface rounded-xl p-6">
         <ol className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
           {journey.map((item, index) => (
             <li key={item.title}>
@@ -103,7 +103,7 @@ export default function PacketJourneyPage() {
                   setPlaying(false);
                 }}
                 aria-current={index === step ? 'step' : undefined}
-                className={`h-full w-full rounded-2xl border p-4 text-left transition ${
+                className={`h-full w-full rounded-xl border p-4 text-left transition ${
                   index === step
                     ? 'border-cyan-400/60 bg-cyan-500/10'
                     : index < step
@@ -111,7 +111,7 @@ export default function PacketJourneyPage() {
                       : 'border-slate-800 bg-slate-950/60 hover:border-slate-600'
                 }`}
               >
-                <div className="mb-3 flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-r from-blue-500 to-cyan-400 font-bold text-slate-950">{index + 1}</div>
+                <div className="mb-3 flex h-8 w-8 items-center justify-center rounded-full bg-blue-600 hover:bg-blue-500 font-bold text-white">{index + 1}</div>
                 <div className="text-slate-200">{item.title}</div>
                 <div className="mt-1 text-xs text-slate-400">Camada {item.layer}</div>
               </button>

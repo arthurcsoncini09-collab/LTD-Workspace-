@@ -11,20 +11,20 @@ const labs = [
 export default function LabsPage() {
   return (
     <div className="space-y-8">
-      <section className="card-surface rounded-[28px] p-6 sm:p-8">
-        <div className="text-sm uppercase tracking-[0.2em] text-cyan-300">Laboratórios</div>
-        <h1 className="mt-3 text-3xl font-bold text-white">Pratique redes de forma visual e ativa</h1>
+      <section className="card-surface rounded-xl p-6 sm:p-8">
+        <div className="text-xs font-medium uppercase tracking-[0.08em] text-blue-400">Laboratórios</div>
+        <h1 className="mt-3 text-3xl font-semibold tracking-tight text-white">Pratique redes de forma visual e ativa</h1>
       </section>
 
       <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-4">
         {labs.map(({ title, description, href, icon: Icon }) => (
-          <Link key={title} href={href} className="card-surface rounded-[28px] p-5 transition hover:-translate-y-1">
-            <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-blue-500/10 text-blue-300">
+          <Link key={title} href={href} className="card-surface rounded-xl p-5 transition hover:border-slate-600">
+            <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-lg bg-blue-500/10 text-blue-300">
               <Icon className="h-5 w-5" />
             </div>
             <h2 className="text-xl font-bold text-white">{title}</h2>
             <p className="mt-3 text-sm leading-relaxed text-slate-300">{description}</p>
-            <div className="mt-5 inline-flex items-center gap-2 text-sm font-medium text-cyan-300">
+            <div className="mt-5 inline-flex items-center gap-2 text-sm font-medium text-blue-400">
               Abrir laboratório <ArrowRight className="h-4 w-4" />
             </div>
           </Link>

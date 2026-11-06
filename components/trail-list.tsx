@@ -31,7 +31,7 @@ export function TrailList({ modules }: { modules: TrailModule[] }) {
           <li key={mod.slug}>
             <Link
               href={`/aulas/${mod.slug}`}
-              className={`flex items-center gap-4 rounded-2xl border p-4 transition hover:border-cyan-400/50 ${
+              className={`flex items-center gap-4 rounded-xl border p-4 transition hover:border-cyan-400/50 ${
                 done ? 'border-emerald-500/30 bg-emerald-500/5' : 'border-slate-800 bg-slate-950/60'
               }`}
             >

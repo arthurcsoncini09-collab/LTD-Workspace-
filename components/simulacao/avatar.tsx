@@ -140,7 +140,7 @@ export function SpeechBubble({
   return (
     <div className="flex items-start gap-3">
       <Avatar character={character} size={size} />
-      <div className={`relative flex-1 rounded-2xl rounded-tl-sm border px-4 py-3 ${styles}`}>
+      <div className={`relative flex-1 rounded-xl rounded-tl-sm border px-4 py-3 ${styles}`}>
         <div className="text-xs font-semibold text-slate-300">
           {character.name} <span className="font-normal text-slate-500">· {character.role}</span>
         </div>

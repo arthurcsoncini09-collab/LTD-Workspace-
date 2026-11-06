@@ -10,9 +10,9 @@ export default function AprenderPage() {
 
   return (
     <div className="space-y-10">
-      <section className="card-surface rounded-[28px] p-6 sm:p-8">
-        <div className="text-sm uppercase tracking-[0.2em] text-cyan-300">Aprender</div>
-        <h1 className="mt-3 text-3xl font-bold text-white">Trilha de aprendizado em redes</h1>
+      <section className="card-surface rounded-xl p-6 sm:p-8">
+        <div className="text-xs font-medium uppercase tracking-[0.08em] text-blue-400">Aprender</div>
+        <h1 className="mt-3 text-3xl font-semibold tracking-tight text-white">Trilha de aprendizado em redes</h1>
         <p className="mt-3 max-w-2xl text-slate-300">
           Tudo começa com conceitos simples e evolui para laboratórios, exercícios e simulações que ajudam a visualizar o que acontece dentro da rede. São{' '}
           {modules.length} módulos organizados por nível.
@@ -21,12 +21,12 @@ export default function AprenderPage() {
 
       {stages.map((stage) => (
         <section key={stage} className="space-y-4">
-          <h2 className="text-sm uppercase tracking-[0.2em] text-cyan-300">{stage}</h2>
+          <h2 className="text-xs font-medium uppercase tracking-[0.08em] text-blue-400">{stage}</h2>
           <div className="grid gap-5 lg:grid-cols-2">
             {modules
               .filter((mod) => mod.stage === stage)
               .map(({ slug, title, description, accent, lessonCount, questionCount }) => (
-                <Link key={slug} href={`/aulas/${slug}`} className="card-surface rounded-[28px] p-5 transition hover:-translate-y-1">
+                <Link key={slug} href={`/aulas/${slug}`} className="card-surface rounded-xl p-5 transition hover:border-slate-600">
                   <div className={`mb-4 h-2 w-24 rounded-full bg-gradient-to-r ${accent}`} />
                   <div className="mb-3 flex items-center justify-between text-xs text-slate-400">
                     <span>
