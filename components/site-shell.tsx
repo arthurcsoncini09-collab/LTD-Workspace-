@@ -25,6 +25,7 @@ import {
   X,
 } from 'lucide-react';
 import { buttonVariants } from './ui/button';
+import { BrandLogo, BrandMark } from './brand-logo';
 
 type NavItem = { label: string; href: string; icon: typeof Home };
 
@@ -168,14 +169,8 @@ export function SiteShell({ children }: { children: React.ReactNode }) {
             isOpen ? 'translate-x-0' : '-translate-x-full'
           } transition-transform duration-200 xl:sticky xl:top-0 xl:h-screen xl:translate-x-0`}
         >
-          <div className="flex h-14 shrink-0 items-center justify-between gap-3 border-b border-border px-4">
-            <Link href="/" className="flex items-center gap-2.5">
-              <div className="flex h-7 w-7 items-center justify-center rounded-md bg-blue-600 text-white">
-                <Network className="h-4 w-4" />
-              </div>
-              <span className="text-[15px] font-semibold tracking-tight text-white">NetLearn</span>
-              <span className="rounded border border-border px-1.5 py-px text-[10px] font-medium text-slate-400">Redes</span>
-            </Link>
+          <div className="flex h-16 shrink-0 items-center justify-between gap-3 border-b border-border px-4">
+            <BrandLogo size={40} tagline />
             <button className={buttonVariants({ variant: 'ghost', size: 'icon', className: 'xl:hidden' })} onClick={() => setOpen(false)} aria-label="Fechar menu">
               <X />
             </button>
@@ -218,11 +213,14 @@ export function SiteShell({ children }: { children: React.ReactNode }) {
 
         <div className="flex min-h-screen w-full min-w-0 flex-col">
           <header className="sticky top-0 z-30 border-b border-border bg-background/80 backdrop-blur-xl">
-            <div className="mx-auto flex h-14 max-w-7xl items-center gap-4 px-4 sm:px-6 lg:px-8">
+            <div className="mx-auto flex h-16 max-w-7xl items-center gap-3 px-4 sm:px-6 lg:px-8">
               <button onClick={() => setOpen(true)} aria-label="Abrir menu" className={buttonVariants({ variant: 'outline', size: 'icon', className: 'xl:hidden' })}>
                 <Menu />
               </button>
 
+              <Link href="/" aria-label="NetLearn — página inicial" className="xl:hidden">
+                <BrandMark size={30} />
+              </Link>
               <nav aria-label="Você está em" className="flex min-w-0 items-center gap-2 text-sm">
                 {activeGroup && activeGroup.title !== 'Geral' ? (
                   <>
@@ -247,7 +245,9 @@ export function SiteShell({ children }: { children: React.ReactNode }) {
 
           <footer className="border-t border-border">
             <div className="mx-auto flex max-w-7xl flex-col gap-2 px-4 py-6 text-xs text-slate-500 sm:flex-row sm:items-center sm:justify-between sm:px-6 lg:px-8">
-              <span>© {new Date().getFullYear()} NetLearn · Fundamentos de Redes</span>
+              <span className="flex items-center gap-2">
+                <BrandMark size={18} />© {new Date().getFullYear()} NetLearn · Fundamentos de Redes
+              </span>
               <span>Conteúdo gratuito e aberto para estudantes de TI.</span>
             </div>
           </footer>
