@@ -9,6 +9,11 @@ export const AREAS: Area[] = [
     id: 'suporte',
     title: 'Suporte Técnico (Help Desk)',
     role: 'Técnico(a) de Suporte',
+    mentor: 'bia',
+    welcome:
+      'Oi, {nome}! Eu sou a Bia e vou te acompanhar no Help Desk. Aqui a gente é a primeira voz que o colega ouve quando algo dá errado — então paciência e método.',
+    promotion:
+      'Você resolveu tudo com calma e explicou direitinho para cada colega. O suporte é seu: parabéns, {nome}!',
     dayToDay:
       'Atende os chamados dos colegas: computador sem internet, impressora que não imprime, site que não abre. É a porta de entrada mais comum para a carreira em TI.',
     topics: ['DHCP', 'DNS', 'Endereçamento IPv4', 'ping e ipconfig'],
@@ -17,6 +22,11 @@ export const AREAS: Area[] = [
     id: 'redes',
     title: 'Administração de Redes',
     role: 'Analista de Redes',
+    mentor: 'paula',
+    welcome:
+      'Bem-vindo(a) à equipe de redes, {nome}. Sou a Paula. Aqui a gente planeja antes de configurar: endereço, VLAN e caminho do pacote.',
+    promotion:
+      'Rede organizada, documentada e funcionando. Agora você é analista de redes, {nome}!',
     dayToDay:
       'Planeja e mantém a rede da empresa: divide endereços entre setores, configura switches e VLANs e garante que cada pacote chegue ao destino.',
     topics: ['Subnetting', 'VLAN', 'Switch e roteador', 'Modelo TCP/IP'],
@@ -25,6 +35,11 @@ export const AREAS: Area[] = [
     id: 'seguranca',
     title: 'Segurança da Informação (SOC)',
     role: 'Analista de Segurança',
+    mentor: 'helena',
+    welcome:
+      'Helena, líder do SOC. Aqui, {nome}, a gente parte do princípio de que alguém está tentando entrar. Nosso trabalho é fechar portas e ler os rastros.',
+    promotion:
+      'Você conteve um invasor sem destruir nenhuma evidência. Bem-vindo(a) ao time de segurança, {nome}.',
     dayToDay:
       'Protege servidores e usuários: define regras de firewall, monitora logs atrás de ataques e responde a incidentes antes que virem prejuízo.',
     topics: ['Firewall', 'Portas de rede', 'SSH', 'Análise de logs'],
@@ -33,6 +48,11 @@ export const AREAS: Area[] = [
     id: 'cloud',
     title: 'Cloud e DevOps',
     role: 'Engenheiro(a) de Cloud',
+    mentor: 'fernanda',
+    welcome:
+      'E aí, {nome}! Fernanda, tech lead de cloud. Na nuvem tudo é rápido — inclusive os erros. Bora colocar a loja no ar do jeito certo.',
+    promotion:
+      'Loja no ar, deploy corrigido e alertas na mão de quem deve. Você é engenheiro(a) de cloud, {nome}!',
     dayToDay:
       'Coloca aplicações no ar na nuvem: desenha redes virtuais, automatiza deploys e monitora se os serviços estão respondendo.',
     topics: ['Sub-redes públicas e privadas', 'NAT', 'TCP e portas', 'HTTP'],
@@ -41,6 +61,11 @@ export const AREAS: Area[] = [
     id: 'noc',
     title: 'Infraestrutura e Telecom (NOC)',
     role: 'Engenheiro(a) de Redes',
+    mentor: 'jorge',
+    welcome:
+      'Opa, {nome}. Jorge, do NOC. Aqui a gente cuida dos links entre cidades. Quando cai, cai para a filial inteira — então nada de chute.',
+    promotion:
+      'Vinte e cinco anos de telecom e pouca gente aprende tão rápido. Pode me chamar de colega, {nome}.',
     dayToDay:
       'Cuida dos links entre cidades e com a internet: interliga matriz e filiais por VPN, acompanha a latência e conversa com operadoras quando algo cai.',
     topics: ['ICMP e traceroute', 'VPN', 'Roteamento', 'Modelo OSI'],
@@ -77,7 +102,7 @@ export const LEVELS: Level[] = [
     kind: 'diagnose',
     title: 'Sem internet no RH',
     ticket: {
-      from: 'Maria — Recursos Humanos',
+      requester: 'maria',
       priority: 'Média',
       message: 'Bom dia! Liguei o computador hoje e nada abre: nem o sistema de ponto, nem a internet. Ontem estava tudo normal.',
     },
@@ -146,6 +171,13 @@ Não foi possível contatar o servidor DHCP. Tempo limite da solicitação esgot
     hint: 'Repare no endereço IPv4 que o ipconfig mostra. Ele pertence à rede 192.168.1.0/24 do escritório?',
     debrief:
       'Endereços 169.254.0.0/16 (APIPA) aparecem quando o cliente envia o DHCP Discover e ninguém responde. Próximos passos de um técnico: ver se outros PCs do setor têm o mesmo problema, se o serviço DHCP está ativo e se o escopo de endereços não esgotou.',
+    story: {
+      briefing: [
+        'Primeiro chamado do dia! A Maria do RH está sem nada funcionando.',
+        'Antes de reiniciar qualquer coisa, roda os comandos e veja o que o computador recebeu da rede. O ipconfig é seu melhor amigo.',
+      ],
+      thanks: 'Voltou tudo! Consegui bater o ponto do pessoal a tempo. Obrigada, {nome}, você salvou minha manhã!',
+    },
     module: { slug: 'dhcp', title: 'DHCP' },
   },
   {
@@ -154,7 +186,7 @@ Não foi possível contatar o servidor DHCP. Tempo limite da solicitação esgot
     kind: 'diagnose',
     title: 'O site não abre… mas a internet funciona?',
     ticket: {
-      from: 'João — Vendas',
+      requester: 'joao',
       priority: 'Alta',
       message: 'Nenhum site abre no meu notebook, aparece "Não foi possível encontrar o endereço". Mas o WhatsApp no computador continua funcionando!',
     },
@@ -230,6 +262,13 @@ Addresses:  142.250.79.36`,
     hint: 'Compare: ping por IP funciona, ping por nome não. Qual serviço transforma nomes em IPs? Para qual servidor o notebook está perguntando?',
     debrief:
       'Quando o acesso por IP funciona e por nome não, o problema é DNS. Alguém configurou o DNS manualmente com 192.168.1.250. A correção é voltar a obter o DNS por DHCP (ou usar 192.168.1.10) e rodar ipconfig /flushdns.',
+    story: {
+      briefing: [
+        "O João jura que \"a internet caiu\", mas o WhatsApp dele funciona. Interessante, né?",
+        'Quando uma coisa funciona e outra não, compare: o que uma precisa que a outra não precisa?',
+      ],
+      thanks: 'Valeu, {nome}! Abri a proposta do cliente dois minutos antes da reunião. Te devo um café.',
+    },
     module: { slug: 'dns', title: 'DNS' },
   },
   {
@@ -238,7 +277,7 @@ Addresses:  142.250.79.36`,
     kind: 'config',
     title: 'Configure a nova impressora',
     ticket: {
-      from: 'Carla — Administrativo',
+      requester: 'carla',
       priority: 'Baixa',
       message: 'Chegou a impressora nova do financeiro! Ela precisa de um IP fixo para todo mundo conseguir imprimir. Pode configurar?',
     },
@@ -278,6 +317,13 @@ Addresses:  142.250.79.36`,
     hint: 'Escolha um número livre fora de 100–200 e diferente de 1, 10, 20 e 21. Gateway e DNS estão na documentação ao lado.',
     debrief:
       'Equipamentos que outros acessam (impressoras, servidores) recebem IP fixo fora da faixa do DHCP ou uma reserva no próprio DHCP. Assim o endereço nunca muda e nunca conflita. Anotar o IP na documentação evita dor de cabeça no futuro.',
+    story: {
+      briefing: [
+        'A Carla comprou uma impressora e — surpresa — avisou depois que chegou.',
+        'Impressora compartilhada precisa de IP fixo e dentro da rede certa. Olha a documentação ao lado antes de digitar.',
+      ],
+      thanks: 'Todo mundo do financeiro já está imprimindo! Da próxima vez eu aviso antes de comprar, prometo. Obrigada, {nome}!',
+    },
     module: { slug: 'subrede-e-mascara', title: 'Sub-rede e máscara' },
   },
 
@@ -288,7 +334,7 @@ Addresses:  142.250.79.36`,
     kind: 'config',
     title: 'Divida a rede da nova filial',
     ticket: {
-      from: 'Ricardo — Gerente de Infraestrutura',
+      requester: 'ricardo',
       priority: 'Média',
       message: 'A filial de Joinville recebeu o bloco 192.168.50.0/24. Quero uma sub-rede separada por setor, todas do mesmo tamanho, cada uma com espaço para até 50 computadores.',
     },
@@ -319,6 +365,13 @@ Addresses:  142.250.79.36`,
     hint: '50 hosts precisam de 6 bits de host (2⁶ − 2 = 62). Isso dá 32 − 6 = /26, com blocos de 64 endereços: .0, .64, .128, .192.',
     debrief:
       'Plano final: Vendas 192.168.50.0/26, Financeiro .64/26, RH .128/26 (broadcast .191) e TI .192/26 (hosts .193 a .254). Separar setores em sub-redes reduz broadcast e permite regras de acesso diferentes para cada um.',
+    story: {
+      briefing: [
+        'O Ricardo vai abrir a filial de Joinville e quer a rede dividida por setor.',
+        'Primeiro descubra quantos endereços cada setor precisa, depois escolha o menor bloco que comporta. O resto é conta de somar.',
+      ],
+      thanks: 'Plano de endereçamento aprovado. Limpo e sem desperdício — é assim que eu gosto, {nome}.',
+    },
     module: { slug: 'subnetting', title: 'Subnetting' },
   },
   {
@@ -327,7 +380,7 @@ Addresses:  142.250.79.36`,
     kind: 'classify',
     title: 'Organize as VLANs do switch',
     ticket: {
-      from: 'Paula — Coordenadora de TI',
+      requester: 'paula',
       priority: 'Média',
       message: 'Auditoria pediu que visitantes nunca enxerguem os sistemas do financeiro. Criamos três VLANs no switch novo; agora falta colocar cada equipamento na certa.',
     },
@@ -349,6 +402,13 @@ Addresses:  142.250.79.36`,
     hint: 'Pergunte para cada equipamento: quem precisa acessá-lo? Algo que vem de fora da empresa nunca deve dividir rede com dados sensíveis.',
     debrief:
       'Cada VLAN é um domínio de broadcast separado: equipamentos de VLANs diferentes só se falam passando pelo roteador ou firewall, onde ficam as regras. Assim a rede de visitantes navega na internet sem enxergar o servidor da folha.',
+    story: {
+      briefing: [
+        'Esse chamado é meu mesmo: a auditoria apertou e precisamos isolar visitante do financeiro.',
+        'Para cada equipamento, pergunte: quem usa e o que ele precisa alcançar?',
+      ],
+      thanks: 'Auditoria vai sair feliz. Visitante só vê internet, financeiro fica protegido. Ótimo trabalho, {nome}!',
+    },
     module: { slug: 'vlan', title: 'VLAN' },
   },
   {
@@ -357,7 +417,7 @@ Addresses:  142.250.79.36`,
     kind: 'sequence',
     title: 'O caminho de um acesso a um site',
     ticket: {
-      from: 'Equipe de treinamento',
+      requester: 'paula',
       priority: 'Baixa',
       message: 'Vamos treinar o estagiário novo. Monte a ordem do que acontece na rede quando um PC recém-ligado abre https://intranet.empresa.com.br pela primeira vez.',
     },
@@ -373,6 +433,13 @@ Addresses:  142.250.79.36`,
     hint: 'Sem IP nada acontece. Antes de mandar qualquer pacote na rede local é preciso saber o MAC do destino. Sem saber o IP do site, não dá para abrir conexão.',
     debrief:
       'Cada etapa depende da anterior: endereço (DHCP) → entrega local (ARP) → nome para IP (DNS) → conexão confiável (TCP) → segurança (TLS) → aplicação (HTTP). Quando algo falha, saber essa ordem mostra onde investigar.',
+    story: {
+      briefing: [
+        'Vamos receber um estagiário novo, o Téo, e quero que você monte o material de treinamento.',
+        'Pense num PC que acabou de ligar: ele ainda não tem IP, não sabe quem é o gateway e não conhece nenhum nome. O que vem primeiro?',
+      ],
+      thanks: 'Perfeito. O Téo vai entender a rede inteira com essa sequência. Você ensina bem, {nome}.',
+    },
     module: { slug: 'tcp-ip', title: 'Modelo TCP/IP' },
   },
 
@@ -383,7 +450,7 @@ Addresses:  142.250.79.36`,
     kind: 'firewall',
     title: 'Proteja o servidor web',
     ticket: {
-      from: 'Lucas — Desenvolvimento',
+      requester: 'lucas',
       priority: 'Alta',
       message: 'O site novo vai ao ar amanhã no srv-web01 (Linux). Monta as regras de firewall dele? Hoje está tudo liberado.',
     },
@@ -407,6 +474,13 @@ Addresses:  142.250.79.36`,
     hint: 'Libere apenas o que um requisito pede. Para o SSH, pense na ordem: a regra mais específica (rede de administração) vem antes da geral.',
     debrief:
       'O princípio do menor privilégio: abrir somente o necessário, para quem precisa. Ao final da lista, um firewall bem configurado ainda tem uma regra padrão "bloquear todo o resto".',
+    story: {
+      briefing: [
+        'O Lucas vai lançar o site amanhã e o servidor está com tudo liberado. Clássico de dev.',
+        'Regra de ouro: libere só o que o serviço precisa e só para quem precisa. Todo o resto, bloqueado.',
+      ],
+      thanks: 'Firewall no ar e o site continua abrindo. Confesso que nem sabia que o MySQL estava exposto… valeu, {nome}!',
+    },
     module: { slug: 'firewall', title: 'Firewall' },
   },
   {
@@ -415,7 +489,7 @@ Addresses:  142.250.79.36`,
     kind: 'logs',
     title: 'Ataque de força bruta?',
     ticket: {
-      from: 'Alerta automático do SIEM',
+      requester: 'siem',
       priority: 'Crítica',
       message: 'Muitas falhas de autenticação SSH em srv-web01 entre 02:30 e 02:45. Analista de plantão: verificar se houve invasão.',
     },
@@ -427,8 +501,8 @@ Addresses:  142.250.79.36`,
       { id: 'l3', text: 'Oct 23 02:31:14 srv-web01 sshd[2190]: Failed password for root from 185.220.101.47 port 40118 ssh2', suspicious: true, why: 'Mesmo IP, dois segundos depois: padrão de ataque automatizado.' },
       { id: 'l4', text: 'Oct 23 02:31:15 srv-web01 sshd[2193]: Failed password for invalid user admin from 185.220.101.47 port 40121 ssh2', suspicious: true, why: 'Testando nomes de usuário comuns que nem existem: força bruta.' },
       { id: 'l5', text: 'Oct 23 02:31:17 srv-web01 sshd[2195]: Failed password for invalid user test from 185.220.101.47 port 40127 ssh2', suspicious: true, why: 'Continua a lista de usuários comuns.' },
-      { id: 'l6', text: 'Oct 23 02:35:40 srv-web01 sshd[2240]: Failed password for ana from 10.0.99.23 port 50211 ssh2', suspicious: false, why: 'Uma única falha, de dentro da rede de administração, seguida de sucesso: alguém errou a senha.' },
-      { id: 'l7', text: 'Oct 23 02:35:52 srv-web01 sshd[2241]: Accepted password for ana from 10.0.99.23 port 50215 ssh2', suspicious: false, why: 'A analista Ana entrando normalmente após errar a senha uma vez.' },
+      { id: 'l6', text: 'Oct 23 02:35:40 srv-web01 sshd[2240]: Failed password for bruno from 10.0.99.23 port 50211 ssh2', suspicious: false, why: 'Uma única falha, de dentro da rede de administração, seguida de sucesso: alguém errou a senha.' },
+      { id: 'l7', text: 'Oct 23 02:35:52 srv-web01 sshd[2241]: Accepted password for bruno from 10.0.99.23 port 50215 ssh2', suspicious: false, why: 'O analista Bruno entrando normalmente após errar a senha uma vez.' },
       { id: 'l8', text: 'Oct 23 02:40:03 srv-web01 sshd[2302]: Accepted password for backup from 185.220.101.47 port 41877 ssh2', suspicious: true, why: 'O pior sinal: o mesmo IP do ataque CONSEGUIU entrar com a conta backup. Houve invasão.' },
       { id: 'l9', text: 'Oct 23 02:40:09 srv-web01 sudo: backup : TTY=pts/1 ; PWD=/home/backup ; USER=root ; COMMAND=/bin/bash', suspicious: true, why: 'Logo após entrar, o invasor virou root. Escalada de privilégio.' },
       { id: 'l10', text: 'Oct 23 03:00:01 srv-web01 CRON[3301]: pam_unix(cron:session): session opened for user root by (uid=0)', suspicious: false, why: 'Tarefa agendada do próprio sistema, todo dia no mesmo horário.' },
@@ -436,6 +510,14 @@ Addresses:  142.250.79.36`,
     hint: 'Siga o IP 185.220.101.47 do começo ao fim. E não esqueça o que ele fez depois de entrar.',
     debrief:
       'Houve invasão: força bruta, acesso pela conta backup (senha fraca) e escalada para root. Resposta: isolar o servidor, bloquear o IP, desativar login por senha no SSH (só chaves), trocar credenciais e investigar o que foi alterado.',
+    story: {
+      briefing: [
+        'O SIEM disparou às 2h da manhã. Pode ser ruído — ou pode ser alguém entrando.',
+        'Não marque toda falha como ataque. Procure o padrão: mesmo IP, intervalos curtos, usuários que nem existem… e o que aconteceu depois.',
+      ],
+      thanks: 'Você achou o login bem-sucedido do atacante e a escalada para root. Já bloqueamos o IP e trocamos as credenciais. Excelente leitura de log, {nome}.',
+      thanksBy: 'helena',
+    },
     module: { slug: 'ssh', title: 'SSH' },
   },
   {
@@ -444,7 +526,7 @@ Addresses:  142.250.79.36`,
     kind: 'diagnose',
     title: 'Processo estranho na estação 07',
     ticket: {
-      from: 'Antivírus corporativo',
+      requester: 'antivirus',
       priority: 'Alta',
       message: 'Comportamento suspeito na estacao-07 (usuária Ana, Marketing): processo desconhecido criado em /tmp. Investigar.',
     },
@@ -498,6 +580,14 @@ ana   Fri Oct 23 09:12:44 2026  /tmp/.cache/update-helper -l 4444 -c 203.0.113.6
     hint: 'Um "update-helper" rodando de uma pasta oculta em /tmp, escutando a porta 4444 e conectado a um IP desconhecido… e um arquivo .pdf.desktop. Primeiro conter, depois investigar.',
     debrief:
       'Um anexo falso (.pdf.desktop) instalou um acesso remoto (reverse shell) que fala com o atacante pela porta 443. A ordem certa em resposta a incidentes é: conter, preservar evidências, investigar, erradicar e recuperar.',
+    story: {
+      briefing: [
+        'O antivírus pegou algo estranho na máquina da Ana, do Marketing.',
+        'Investigue o que esse processo escuta, com quem conversa e de onde veio. E lembre: em incidente, a primeira decisão é a mais importante.',
+      ],
+      thanks: 'Desculpa, gente… o e-mail parecia mesmo do fornecedor. Obrigada por resolver sem eu perder meus arquivos, {nome}. Vou fazer o treinamento de phishing!',
+      thanksBy: 'ana',
+    },
     module: { slug: 'portas-de-rede', title: 'Portas de rede' },
   },
 
@@ -508,7 +598,7 @@ ana   Fri Oct 23 09:12:44 2026  /tmp/.cache/update-helper -l 4444 -c 203.0.113.6
     kind: 'classify',
     title: 'Monte a rede da aplicação na nuvem',
     ticket: {
-      from: 'Fernanda — Tech Lead',
+      requester: 'fernanda',
       priority: 'Média',
       message: 'Vamos subir a loja virtual na nuvem. A VPC tem uma sub-rede pública e uma privada. Em qual vai cada componente?',
     },
@@ -528,6 +618,13 @@ ana   Fri Oct 23 09:12:44 2026  /tmp/.cache/update-helper -l 4444 -c 203.0.113.6
     hint: 'Algum cliente da loja precisa se conectar direto no banco de dados? E quem as máquinas privadas usam para sair para a internet?',
     debrief:
       'Esse desenho em duas camadas é o padrão na nuvem: a internet só alcança o balanceador; aplicação, banco e cache ficam escondidos. As máquinas privadas saem para a internet pelo NAT gateway, mas ninguém de fora inicia conexão com elas.',
+    story: {
+      briefing: [
+        'Bora subir a loja virtual! A VPC já tem uma sub-rede pública e uma privada.',
+        'O que o cliente precisa acessar direto da internet? Só isso fica na pública.',
+      ],
+      thanks: 'Arquitetura aprovada no review de segurança de primeira. Isso quase nunca acontece, {nome}!',
+    },
     module: { slug: 'nat-e-pat', title: 'NAT e PAT' },
   },
   {
@@ -536,7 +633,7 @@ ana   Fri Oct 23 09:12:44 2026  /tmp/.cache/update-helper -l 4444 -c 203.0.113.6
     kind: 'diagnose',
     title: 'Deploy feito, site fora do ar',
     ticket: {
-      from: 'Monitoramento do balanceador',
+      requester: 'monitor',
       priority: 'Crítica',
       message: 'Após o deploy das 14h, o health check marca o servidor app-02 como "unhealthy". O balanceador testa http://10.0.2.15:8080/health.',
     },
@@ -573,6 +670,14 @@ ana   Fri Oct 23 09:12:44 2026  /tmp/.cache/update-helper -l 4444 -c 203.0.113.6
     hint: 'Compare o curl para localhost com o curl para 10.0.2.15. Depois veja em qual endereço o processo node está escutando.',
     debrief:
       'Um socket TCP é IP + porta. Escutar em 127.0.0.1:8080 aceita só conexões locais; 0.0.0.0:8080 aceita em todas as interfaces. A nova versão mudou o padrão para localhost. A correção é configurar HOST=0.0.0.0 e reiniciar o serviço.',
+    story: {
+      briefing: [
+        'Deploy das 14h e o app-02 sumiu do balanceador. O Diego já está me mandando mensagem.',
+        'O health check testa uma porta específica. Confirme se a aplicação está mesmo escutando onde o balanceador procura.',
+      ],
+      thanks: 'app-02 de volta ao balanceador, health check verde. Achou o problema antes de eu terminar o café, {nome}!',
+      thanksBy: 'diego',
+    },
     module: { slug: 'tcp-udp', title: 'TCP e UDP' },
   },
   {
@@ -581,7 +686,7 @@ ana   Fri Oct 23 09:12:44 2026  /tmp/.cache/update-helper -l 4444 -c 203.0.113.6
     kind: 'classify',
     title: 'Triagem dos alertas HTTP',
     ticket: {
-      from: 'Plantão de DevOps',
+      requester: 'diego',
       priority: 'Alta',
       message: 'O painel de monitoramento disparou vários eventos. Separe cada um pela família do código HTTP que ele gera, para sabermos quem acionar.',
     },
@@ -604,6 +709,13 @@ ana   Fri Oct 23 09:12:44 2026  /tmp/.cache/update-helper -l 4444 -c 203.0.113.6
     hint: 'Pergunte: a requisição deu certo? O recurso mudou de endereço? Quem errou foi quem pediu ou quem deveria responder?',
     debrief:
       'Monitorar a taxa de 5xx é uma das métricas mais importantes em produção: erros do servidor são responsabilidade do time e acionam o plantão. Muitos 4xx podem indicar um link quebrado ou um app desatualizado.',
+    story: {
+      briefing: [
+        'O Diego está afogado em alertas e precisa saber quem acordar para cada um.',
+        'O primeiro dígito do código HTTP diz quase tudo: deu certo, mudou de lugar, o cliente errou ou o servidor errou.',
+      ],
+      thanks: 'Agora cada alerta vai para o time certo. Ninguém mais me liga às 3h por causa de um 404. Obrigado, {nome}!',
+    },
     module: { slug: 'http-https', title: 'HTTP e HTTPS' },
   },
 
@@ -614,7 +726,7 @@ ana   Fri Oct 23 09:12:44 2026  /tmp/.cache/update-helper -l 4444 -c 203.0.113.6
     kind: 'diagnose',
     title: 'A filial está lenta',
     ticket: {
-      from: 'Filial Blumenau',
+      requester: 'rafael',
       priority: 'Alta',
       message: 'O ERP está muito lento desde as 10h, às vezes nem carrega. O ERP fica na matriz (10.20.0.10).',
     },
@@ -674,6 +786,13 @@ Rastreamento concluído.`,
     hint: 'No traceroute, procure o primeiro salto em que o tempo dispara — e se ele continua alto daí em diante.',
     debrief:
       'O traceroute mostra a latência salto a salto (usando o TTL e mensagens ICMP Time Exceeded). Se o tempo sobe num salto e permanece alto até o destino, o gargalo está ali. Evidência em mãos agiliza muito o chamado com a operadora.',
+    story: {
+      briefing: [
+        'O Rafael, de Blumenau, ligou nervoso: o ERP está se arrastando e as vendas pararam.',
+        'Teste do mais perto para o mais longe: gateway local, depois a matriz, depois o caminho entre os dois. Onde a latência dispara, está o problema.',
+      ],
+      thanks: 'O link voltou ao normal e as vendas voltaram a rodar. Você é rápido(a), {nome}! Vou elogiar no e-mail para a diretoria.',
+    },
     module: { slug: 'icmp', title: 'ICMP' },
   },
   {
@@ -682,7 +801,7 @@ Rastreamento concluído.`,
     kind: 'config',
     title: 'Conecte a filial por VPN',
     ticket: {
-      from: 'Ricardo — Gerente de Infraestrutura',
+      requester: 'ricardo',
       priority: 'Média',
       message: 'O roteador da filial Itajaí veio de fábrica com a LAN 10.10.5.0/24, mas a matriz já usa 10.10.0.0/16. A VPN não sobe assim. Pode readequar e configurar o túnel?',
     },
@@ -717,6 +836,13 @@ Rastreamento concluído.`,
     hint: 'Qualquer rede que comece com 10.10. está dentro da matriz. Tente, por exemplo, 10.30.5.0. A rede remota é a da matriz, com a máscara dela.',
     debrief:
       'Uma VPN site-a-site roteia tráfego entre duas LANs: se elas se sobrepõem, o roteador não sabe se 10.10.5.20 está "aqui" ou "do outro lado". Por isso um plano de endereçamento único para matriz e filiais é essencial antes de interligá-las.',
+    story: {
+      briefing: [
+        'O Ricardo precisa da VPN de Itajaí no ar, mas o roteador veio com uma faixa que já existe na matriz.',
+        'Dois lados de uma VPN não podem usar a mesma rede. Escolha uma faixa livre e lembre de apontar o túnel para o IP público certo.',
+      ],
+      thanks: 'Túnel de pé e sem conflito de endereços. Documentado também? Então está promovido(a) na minha lista, {nome}.',
+    },
     module: { slug: 'vpn', title: 'VPN' },
   },
   {
@@ -725,7 +851,7 @@ Rastreamento concluído.`,
     kind: 'sequence',
     title: 'Desafio final: método de diagnóstico',
     ticket: {
-      from: 'Diretoria de TI',
+      requester: 'sonia',
       priority: 'Crítica',
       message: 'Para a sua promoção a especialista: documente o método que a equipe deve seguir quando "a rede não funciona", do mais básico ao mais complexo.',
     },
@@ -741,6 +867,13 @@ Rastreamento concluído.`,
     hint: 'Não adianta testar o DNS se o cabo está desconectado. Comece pelo que não depende de nada.',
     debrief:
       'Diagnosticar de baixo para cima evita perder tempo: cada camada só funciona se as de baixo funcionam. Você usou esse método em todas as fases do jogo — parabéns pela promoção!',
+    story: {
+      briefing: [
+        'A Sônia, diretora de TI, quer que você deixe sua marca: um método para a equipe inteira seguir.',
+        'Você usou esse método em todas as fases sem perceber. É só colocar no papel — de baixo para cima.',
+      ],
+      thanks: 'Acompanhei sua carreira desde o primeiro chamado da Maria. Você não só resolve: você ensina. Parabéns, {nome} — especialista em infraestrutura de TI.',
+    },
     module: { slug: 'modelo-osi', title: 'Modelo OSI' },
   },
 ];

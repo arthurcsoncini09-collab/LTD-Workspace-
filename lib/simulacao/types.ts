@@ -1,5 +1,7 @@
 // Tipos do jogo "Carreira em TI" (aba Simulação).
 
+import type { CharacterId } from './characters';
+
 export type AreaId = 'suporte' | 'redes' | 'seguranca' | 'cloud' | 'noc';
 
 export type Area = {
@@ -7,6 +9,12 @@ export type Area = {
   title: string;
   /** Cargo conquistado ao concluir as fases da área. */
   role: string;
+  /** Mentor(a) que acompanha o jogador nesta área. */
+  mentor: CharacterId;
+  /** Fala do mentor ao apresentar a área. */
+  welcome: string;
+  /** Fala do mentor ao promover o jogador. */
+  promotion: string;
   /** O que esse profissional faz no dia a dia. */
   dayToDay: string;
   /** Temas do NetLearn mais usados na área. */
@@ -14,8 +22,8 @@ export type Area = {
 };
 
 type Ticket = {
-  /** Quem abriu o chamado, ex.: "Maria — RH". */
-  from: string;
+  /** Personagem que abriu o chamado. */
+  requester: CharacterId;
   /** Prioridade mostrada no chamado. */
   priority: 'Baixa' | 'Média' | 'Alta' | 'Crítica';
   message: string;
@@ -32,6 +40,15 @@ type BaseLevel = {
   hint: string;
   /** Explicação final, mostrada ao concluir. */
   debrief: string;
+  /** Diálogos da fase. {nome} vira o nome do jogador. */
+  story: {
+    /** Falas do mentor antes de começar. */
+    briefing: string[];
+    /** Agradecimento ao resolver. */
+    thanks: string;
+    /** Quem agradece (padrão: quem abriu o chamado). */
+    thanksBy?: CharacterId;
+  };
   /** Módulo do NetLearn para revisar (slug de /aulas/[slug]). */
   module: { slug: string; title: string };
 };

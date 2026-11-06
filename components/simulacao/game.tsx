@@ -13,6 +13,7 @@ import {
   Lightbulb,
   Lock,
   Network,
+  Pencil,
   Play,
   RadioTower,
   RotateCcw,
@@ -24,6 +25,9 @@ import {
 } from 'lucide-react';
 import { AREAS, FINAL_ROLE, LEVELS, START_ROLE, levelIndex } from '@/lib/simulacao/levels';
 import { KIND_LABEL, type AreaId, type Level } from '@/lib/simulacao/types';
+import { CHARACTERS, firstName, say } from '@/lib/simulacao/characters';
+import { Avatar, FaceAvatar, SpeechBubble } from './avatar';
+import { CastGallery, CharacterCreator } from './cast';
 import { ClassifyMechanic, ConfigMechanic, DiagnoseMechanic, FirewallMechanic, LogsMechanic, SequenceMechanic } from './mechanics';
 import { XP_PER_STAR, simActions, starsFor, useSimProgress, type SimProgress } from './sim-progress';
 
@@ -105,18 +109,53 @@ function Hub({ progress, onOpen }: { progress: SimProgress; onOpen: (id: string)
   const completed = LEVELS.filter((l) => progress.results[l.id]).length;
   const next = LEVELS.find((l) => !progress.results[l.id]);
   const role = currentRole(progress);
+  const player = progress.player;
+  const [editing, setEditing] = useState(false);
+  const [skipped, setSkipped] = useState(false);
+  const showCreator = editing || (!player && !skipped && completed === 0);
 
   return (
     <div className="space-y-8">
+      {showCreator ? (
+        <CharacterCreator
+          initial={player}
+          onDone={() => {
+            setEditing(false);
+            setSkipped(true);
+          }}
+        />
+      ) : null}
+
       <section className="card-surface overflow-hidden rounded-[28px] p-6 sm:p-8">
         <div className="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
-          <div className="max-w-2xl">
+          <div className="flex max-w-2xl gap-5">
+            {player ? (
+              <div className="hidden shrink-0 flex-col items-center gap-2 sm:flex">
+                <FaceAvatar look={player.look} size={88} title={player.name} />
+                <button
+                  type="button"
+                  onClick={() => setEditing(true)}
+                  className="inline-flex items-center gap-1 text-xs text-slate-400 hover:text-cyan-200"
+                >
+                  <Pencil className="h-3 w-3" />
+                  Editar
+                </button>
+              </div>
+            ) : null}
+            <div>
             <div className="text-sm uppercase tracking-[0.2em] text-cyan-300">Simulação · Carreira em TI</div>
-            <h1 className="mt-3 text-3xl font-bold text-white sm:text-4xl">Do estágio a especialista</h1>
+            <h1 className="mt-3 text-3xl font-bold text-white sm:text-4xl">{player ? `${player.name}: do estágio a especialista` : 'Do estágio a especialista'}</h1>
             <p className="mt-3 text-slate-300">
-              Você acabou de entrar no time de TI. Resolva chamados reais de 5 áreas diferentes usando o que aprendeu nas aulas. Cada fase
-              concluída libera a próxima — e cada área completa rende uma promoção.
+              Você acabou de entrar no time de TI. Resolva chamados reais de 5 áreas diferentes usando o que aprendeu nas aulas, com a ajuda de
+              um(a) mentor(a) em cada área. Cada fase concluída libera a próxima — e cada área completa rende uma promoção.
             </p>
+            {!player && !showCreator ? (
+              <button type="button" onClick={() => setEditing(true)} className="mt-3 inline-flex items-center gap-1.5 text-sm text-cyan-200 hover:text-white">
+                <Pencil className="h-3.5 w-3.5" />
+                Criar seu personagem
+              </button>
+            ) : null}
+            </div>
           </div>
           {next ? (
             <button
@@ -191,6 +230,22 @@ function Hub({ progress, onOpen }: { progress: SimProgress; onOpen: (id: string)
               </div>
             </div>
 
+            <div className="mt-5">
+              {locked ? (
+                <div className="flex items-center gap-3 text-sm text-slate-500">
+                  <Avatar character={CHARACTERS[area.mentor]} size={40} dimmed />
+                  <span className="inline-flex items-center gap-1.5">
+                    <Lock className="h-3.5 w-3.5" />
+                    Seu(sua) mentor(a) desta área aparece quando você chegar aqui.
+                  </span>
+                </div>
+              ) : (
+                <SpeechBubble character={CHARACTERS[area.mentor]} tone={done ? 'success' : 'default'} size={40}>
+                  {say(done ? area.promotion : area.welcome, player?.name)}
+                </SpeechBubble>
+              )}
+            </div>
+
             <div className="mt-6 grid gap-3 md:grid-cols-3">
               {areaLevels(area.id).map((level) => {
                 const index = levelIndex(level.id);
@@ -214,7 +269,13 @@ function Hub({ progress, onOpen }: { progress: SimProgress; onOpen: (id: string)
                       <span className="font-mono text-slate-400">Fase {index + 1}</span>
                       <span className="rounded-full border border-slate-700 px-2 py-0.5 text-slate-300">{KIND_LABEL[level.kind]}</span>
                     </div>
-                    <div className={`mt-3 font-semibold ${unlocked ? 'text-white' : 'text-slate-500'}`}>{level.title}</div>
+                    <div className="mt-3 flex items-center gap-3">
+                      <Avatar character={CHARACTERS[level.ticket.requester]} size={32} dimmed={!unlocked} />
+                      <div className="min-w-0">
+                        <div className={`font-semibold ${unlocked ? 'text-white' : 'text-slate-500'}`}>{level.title}</div>
+                        <div className="truncate text-xs text-slate-500">{unlocked ? CHARACTERS[level.ticket.requester].name : 'Chamado bloqueado'}</div>
+                      </div>
+                    </div>
                     <div className="mt-3 flex items-center justify-between text-xs">
                       {result ? (
                         <Stars count={result.stars} />
@@ -238,6 +299,8 @@ function Hub({ progress, onOpen }: { progress: SimProgress; onOpen: (id: string)
           </section>
         );
       })}
+
+      <CastGallery progress={progress} />
 
       {completed > 0 ? (
         <div className="flex justify-end">
@@ -265,6 +328,7 @@ function LevelPlayer({ level, onExit, onOpen }: { level: Level; onExit: () => vo
   const progress = useSimProgress();
   const [attempt, setAttempt] = useState(0);
   const [mistakes, setMistakes] = useState(0);
+  const [slips, setSlips] = useState(0);
   const [hintShown, setHintShown] = useState(false);
   const [solved, setSolved] = useState(false);
 
@@ -275,8 +339,17 @@ function LevelPlayer({ level, onExit, onOpen }: { level: Level; onExit: () => vo
   const stars = starsFor(mistakes);
   const AreaIcon = AREA_ICON[level.area];
   const lastOfArea = !nextLevel || nextLevel.area !== level.area;
+  const mentor = CHARACTERS[area.mentor];
+  const requester = CHARACTERS[level.ticket.requester];
+  const thanksBy = CHARACTERS[level.story.thanksBy ?? level.ticket.requester];
+  const playerName = progress.player?.name;
+  const mistakeLines = mentor.onMistake ?? [];
 
-  const onMistake = () => setMistakes((m) => m + 1);
+  // Erro na mecânica: conta para as estrelas e faz o mentor comentar.
+  const onMistake = () => {
+    setMistakes((m) => m + 1);
+    setSlips((n) => n + 1);
+  };
   const onSolved = () => {
     setSolved(true);
     simActions.complete(level.id, starsFor(mistakes));
@@ -285,6 +358,7 @@ function LevelPlayer({ level, onExit, onOpen }: { level: Level; onExit: () => vo
   const restart = () => {
     setAttempt((a) => a + 1);
     setMistakes(0);
+    setSlips(0);
     setHintShown(false);
     setSolved(false);
     window.scrollTo({ top: 0 });
@@ -341,11 +415,19 @@ function LevelPlayer({ level, onExit, onOpen }: { level: Level; onExit: () => vo
             <div className="flex flex-wrap items-center justify-between gap-2">
               <div className="flex items-center gap-2 text-sm text-slate-400">
                 <Ticket className="h-4 w-4" />
-                Chamado #{2026100 + index * 7} · {level.ticket.from}
+                Chamado #{2026100 + index * 7}
               </div>
               <span className={`rounded-full border px-2 py-0.5 text-xs ${PRIORITY_STYLE[level.ticket.priority]}`}>Prioridade {level.ticket.priority}</span>
             </div>
-            <p className="mt-3 text-slate-100">“{level.ticket.message}”</p>
+            <div className="mt-4 flex items-start gap-3">
+              <Avatar character={requester} size={48} />
+              <div>
+                <div className="text-sm font-semibold text-white">
+                  {requester.name} <span className="font-normal text-slate-400">· {requester.role}</span>
+                </div>
+                <p className="mt-1 text-slate-100">“{level.ticket.message}”</p>
+              </div>
+            </div>
           </div>
 
           <div className="space-y-3">
@@ -364,11 +446,14 @@ function LevelPlayer({ level, onExit, onOpen }: { level: Level; onExit: () => vo
             ) : null}
             {hintShown ? (
               <div className="rounded-2xl border border-amber-300/30 bg-amber-300/10 p-4 text-sm text-amber-50">
-                <div className="mb-1 flex items-center gap-2 font-semibold">
+                <div className="mb-2 flex items-center gap-2 font-semibold">
                   <Lightbulb className="h-4 w-4" />
-                  Dica
+                  Dica de {firstName(mentor)}
                 </div>
-                {level.hint}
+                <div className="flex items-start gap-3">
+                  <Avatar character={mentor} size={32} />
+                  <span>{level.hint}</span>
+                </div>
               </div>
             ) : !solved ? (
               <button
@@ -380,15 +465,32 @@ function LevelPlayer({ level, onExit, onOpen }: { level: Level; onExit: () => vo
                 className="inline-flex w-full items-center justify-center gap-2 rounded-2xl border border-dashed border-amber-300/40 px-4 py-3 text-sm text-amber-100 hover:bg-amber-300/10"
               >
                 <Lightbulb className="h-4 w-4" />
-                Pedir uma dica (conta como 1 erro)
+                Pedir uma dica a {firstName(mentor)} (conta como 1 erro)
               </button>
             ) : null}
           </div>
+        </div>
+
+        <div className="mt-6">
+          <SpeechBubble character={mentor} size={44}>
+            <div className="space-y-1.5">
+              {level.story.briefing.map((line, i) => (
+                <p key={i}>{say(line, playerName)}</p>
+              ))}
+            </div>
+          </SpeechBubble>
         </div>
       </section>
 
       <section className="card-surface rounded-[28px] p-6 sm:p-8" key={attempt}>
         {mechanic}
+        {slips > 0 && !solved && mistakeLines.length ? (
+          <div className="mt-5" aria-live="polite">
+            <SpeechBubble character={mentor} tone="warn" size={40}>
+              {say(mistakeLines[(slips - 1) % mistakeLines.length], playerName)}
+            </SpeechBubble>
+          </div>
+        ) : null}
       </section>
 
       {solved ? (
@@ -414,6 +516,17 @@ function LevelPlayer({ level, onExit, onOpen }: { level: Level; onExit: () => vo
                   Você agora é <strong>{nextLevel ? area.role : FINAL_ROLE}</strong>.
                 </div>
               </div>
+            ) : null}
+          </div>
+
+          <div className="mt-6 space-y-3">
+            <SpeechBubble character={thanksBy} tone="success">
+              {say(level.story.thanks, playerName)}
+            </SpeechBubble>
+            {lastOfArea ? (
+              <SpeechBubble character={mentor} tone="success">
+                {say(area.promotion, playerName)}
+              </SpeechBubble>
             ) : null}
           </div>
 

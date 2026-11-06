@@ -1,11 +1,13 @@
 'use client';
 
 import { useSyncExternalStore } from 'react';
+import type { PlayerProfile } from '@/lib/simulacao/characters';
 
-// Resultado das fases do jogo, salvo no navegador. Guarda sempre a melhor pontuação.
+// Resultado das fases do jogo e o personagem do jogador, salvos no navegador.
+// Guarda sempre a melhor pontuação de cada fase.
 
 export type LevelResult = { stars: number; at: string };
-export type SimProgress = { results: Record<string, LevelResult> };
+export type SimProgress = { results: Record<string, LevelResult>; player?: PlayerProfile };
 
 const STORAGE_KEY = 'netlearn:simulacao:v1';
 const EMPTY: SimProgress = { results: {} };
@@ -66,9 +68,13 @@ export const simActions = {
     const current = read();
     const previous = current.results[levelId];
     if (previous && previous.stars >= stars) return;
-    write({ results: { ...current.results, [levelId]: { stars, at: new Date().toISOString() } } });
+    write({ ...current, results: { ...current.results, [levelId]: { stars, at: new Date().toISOString() } } });
   },
+  setPlayer(player: PlayerProfile) {
+    write({ ...read(), player: { ...player, name: player.name.trim().slice(0, 24) } });
+  },
+  /** Recomeça a carreira, mas mantém o personagem criado. */
   reset() {
-    write(EMPTY);
+    write({ ...EMPTY, player: read().player });
   },
 };
