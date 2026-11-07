@@ -114,3 +114,48 @@ h1, h2, h3 {
     scroll-behavior: auto !important;
   }
 }
+
+/* ---------------------------------------------------------------------------
+   Celular e toque */
+
+body {
+  overflow-wrap: break-word;
+  -webkit-tap-highlight-color: transparent;
+}
+
+a, button, [role='button'], label, summary {
+  touch-action: manipulation;
+}
+
+/* Campos com menos de 16px fazem o iPhone dar zoom ao tocar. */
+@media (max-width: 767px) {
+  input, select, textarea {
+    font-size: 16px !important;
+  }
+}
+
+/* Áreas seguras (entalhe e barra de gestos) quando o site roda como app. */
+.pt-safe {
+  padding-top: env(safe-area-inset-top);
+}
+.pb-safe {
+  padding-bottom: env(safe-area-inset-bottom);
+}
+.pl-safe {
+  padding-left: env(safe-area-inset-left);
+}
+
+/* Esconde a barra de rolagem em listas horizontais deslizáveis. */
+.no-scrollbar {
+  scrollbar-width: none;
+}
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+/* Evita "balanço" lateral no celular por frações de pixel (clip não quebra o cabeçalho fixo). */
+@media (max-width: 1279px) {
+  html, body {
+    overflow-x: clip;
+  }
+}

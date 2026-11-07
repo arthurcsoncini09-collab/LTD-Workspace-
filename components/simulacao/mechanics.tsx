@@ -326,10 +326,55 @@ export function ClassifyMechanic({ level, solved, onMistake, onSolved }: Mechani
 // ---------------------------------------------------------------------------
 // Firewall: permitir ou bloquear cada regra
 
+function RuleButtons({
+  rule,
+  actions,
+  solved,
+  onPick,
+}: {
+  rule: FirewallLevel['rules'][number];
+  actions: Record<string, 'allow' | 'deny'>;
+  solved: boolean;
+  onPick: (id: string, value: 'allow' | 'deny') => void;
+}) {
+  return (
+    <>
+      {(['allow', 'deny'] as const).map((value) => {
+        const active = actions[rule.id] === value;
+        const Icon = value === 'allow' ? ShieldCheck : ShieldX;
+        return (
+          <button
+            key={value}
+            type="button"
+            disabled={solved}
+            aria-pressed={active}
+            aria-label={`${value === 'allow' ? 'Permitir' : 'Bloquear'} ${rule.service} ${rule.protocol}/${rule.port}`}
+            onClick={() => onPick(rule.id, value)}
+            className={`inline-flex items-center justify-center gap-1.5 rounded-lg border px-3 py-2.5 text-sm font-medium transition md:px-2.5 md:py-1.5 md:text-xs ${
+              active
+                ? value === 'allow'
+                  ? 'border-emerald-400/60 bg-emerald-500/15 text-emerald-100'
+                  : 'border-rose-400/60 bg-rose-500/15 text-rose-100'
+                : 'border-slate-700 text-slate-400 hover:border-slate-500'
+            }`}
+          >
+            <Icon className="h-3.5 w-3.5" />
+            {value === 'allow' ? 'Permitir' : 'Bloquear'}
+          </button>
+        );
+      })}
+    </>
+  );
+}
+
 export function FirewallMechanic({ level, solved, onMistake, onSolved }: MechanicProps<FirewallLevel>) {
   const [actions, setActions] = useState<Record<string, 'allow' | 'deny'>>({});
   const [wrong, setWrong] = useState<string[]>([]);
   const complete = level.rules.every((rule) => actions[rule.id]);
+  const pick = (id: string, value: 'allow' | 'deny') => {
+    setActions((a) => ({ ...a, [id]: value }));
+    setWrong((w) => w.filter((x) => x !== id));
+  };
 
   const apply = () => {
     const bad = level.rules.filter((rule) => actions[rule.id] !== rule.correct).map((rule) => rule.id);
@@ -350,7 +395,33 @@ export function FirewallMechanic({ level, solved, onMistake, onSolved }: Mechani
         </ul>
       </div>
 
-      <div className="overflow-x-auto rounded-xl border border-slate-800">
+      {/* Celular: uma regra por cartão */}
+      <ul className="space-y-3 md:hidden">
+        {level.rules.map((rule, index) => {
+          const isWrong = wrong.includes(rule.id);
+          return (
+            <li key={rule.id} className={`rounded-xl border p-4 ${isWrong ? 'border-rose-500/40 bg-rose-500/10' : 'border-slate-800 bg-slate-950/40'}`}>
+              <div className="flex items-baseline justify-between gap-3">
+                <span className="font-semibold text-slate-100">
+                  <span className="mr-2 font-mono text-xs text-slate-500">#{index + 1}</span>
+                  {rule.service}
+                </span>
+                <span className="font-mono text-xs text-slate-400">
+                  {rule.protocol}/{rule.port}
+                </span>
+              </div>
+              <div className="mt-1 text-xs text-slate-400">
+                Origem: <span className="font-mono text-slate-300">{rule.source}</span>
+              </div>
+              <div className="mt-3 grid grid-cols-2 gap-2">
+                <RuleButtons rule={rule} actions={actions} solved={solved} onPick={pick} />
+              </div>
+            </li>
+          );
+        })}
+      </ul>
+
+      <div className="hidden overflow-x-auto rounded-xl border border-slate-800 md:block">
         <table className="w-full min-w-[640px] text-left text-sm">
           <thead className="bg-slate-900/80 text-xs uppercase tracking-wider text-slate-400">
             <tr>
@@ -374,32 +445,7 @@ export function FirewallMechanic({ level, solved, onMistake, onSolved }: Mechani
                   <td className="px-4 py-3 font-mono text-slate-300">{rule.source}</td>
                   <td className="px-4 py-3">
                     <div className="flex gap-2">
-                      {(['allow', 'deny'] as const).map((value) => {
-                        const active = actions[rule.id] === value;
-                        const Icon = value === 'allow' ? ShieldCheck : ShieldX;
-                        return (
-                          <button
-                            key={value}
-                            type="button"
-                            disabled={solved}
-                            aria-pressed={active}
-                            onClick={() => {
-                              setActions((a) => ({ ...a, [rule.id]: value }));
-                              setWrong((w) => w.filter((id) => id !== rule.id));
-                            }}
-                            className={`inline-flex items-center gap-1.5 rounded-lg border px-2.5 py-1.5 text-xs font-medium transition ${
-                              active
-                                ? value === 'allow'
-                                  ? 'border-emerald-400/60 bg-emerald-500/15 text-emerald-100'
-                                  : 'border-rose-400/60 bg-rose-500/15 text-rose-100'
-                                : 'border-slate-700 text-slate-400 hover:border-slate-500'
-                            }`}
-                          >
-                            <Icon className="h-3.5 w-3.5" />
-                            {value === 'allow' ? 'Permitir' : 'Bloquear'}
-                          </button>
-                        );
-                      })}
+                      <RuleButtons rule={rule} actions={actions} solved={solved} onPick={pick} />
                     </div>
                   </td>
                 </tr>
@@ -566,10 +612,10 @@ export function SequenceMechanic({ level, solved, onMistake, onSolved }: Mechani
               <span className="flex-1">{step.text}</span>
               {!solved ? (
                 <span className="flex shrink-0 flex-col gap-1">
-                  <button type="button" onClick={() => move(index, -1)} disabled={index === 0} aria-label="Mover para cima" className="rounded-md border border-slate-700 p-1 hover:border-cyan-400/60 disabled:opacity-30">
+                  <button type="button" onClick={() => move(index, -1)} disabled={index === 0} aria-label="Mover para cima" className="rounded-md border border-slate-700 p-2 hover:border-cyan-400/60 disabled:opacity-30 sm:p-1">
                     <ArrowUp className="h-3.5 w-3.5" />
                   </button>
-                  <button type="button" onClick={() => move(index, 1)} disabled={index === order.length - 1} aria-label="Mover para baixo" className="rounded-md border border-slate-700 p-1 hover:border-cyan-400/60 disabled:opacity-30">
+                  <button type="button" onClick={() => move(index, 1)} disabled={index === order.length - 1} aria-label="Mover para baixo" className="rounded-md border border-slate-700 p-2 hover:border-cyan-400/60 disabled:opacity-30 sm:p-1">
                     <ArrowDown className="h-3.5 w-3.5" />
                   </button>
                 </span>

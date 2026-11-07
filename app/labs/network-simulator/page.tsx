@@ -122,7 +122,7 @@ export default function NetworkSimulatorPage() {
                     setResult(null);
                     setVisibleSteps(0);
                   }}
-                  className="rounded-full border border-slate-700 px-3 py-1 text-xs text-slate-300 hover:border-cyan-400/60"
+                  className="rounded-full border border-slate-700 px-3 py-2 text-xs text-slate-300 hover:border-cyan-400/60 sm:py-1"
                 >
                   {preset.label}
                 </button>
@@ -132,8 +132,8 @@ export default function NetworkSimulatorPage() {
         </div>
 
         <div className="card-surface space-y-5 rounded-xl p-4 sm:p-6">
-          <div className="overflow-hidden rounded-xl border border-slate-800 bg-slate-950/60">
-            <svg viewBox="0 0 800 330" className="h-auto w-full" role="img" aria-label="Topologia: PC1 e PC2 no switch, switch no roteador, roteador no servidor">
+          <div className="soft-scrollbar overflow-x-auto rounded-xl border border-slate-800 bg-slate-950/60">
+            <svg viewBox="0 0 800 330" className="h-auto w-full min-w-[600px] sm:min-w-0" role="img" aria-label="Topologia: PC1 e PC2 no switch, switch no roteador, roteador no servidor">
               {links.map(([a, b]) => (
                 <line key={`${a}-${b}`} x1={nodes[a].x} y1={nodes[a].y} x2={nodes[b].x} y2={nodes[b].y} stroke="#22d3ee" strokeOpacity={0.5} strokeWidth={3} />
               ))}

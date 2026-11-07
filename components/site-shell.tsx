@@ -68,6 +68,49 @@ const navGroups: { title: string; items: NavItem[] }[] = [
 
 const navItems = navGroups.flatMap((group) => group.items);
 
+/** Abas da barra inferior no celular; o último botão abre o menu completo. */
+const tabItems: { label: string; href: string; icon: typeof Home; match: (path: string) => boolean }[] = [
+  { label: 'Início', href: '/', icon: Home, match: (p) => p === '/' || p === '/dashboard' },
+  { label: 'Aprender', href: '/aprender', icon: BookOpen, match: (p) => ['/aprender', '/aulas', '/trilha', '/quizzes', '/glossario'].some((h) => p.startsWith(h)) },
+  { label: 'Praticar', href: '/labs', icon: Network, match: (p) => ['/labs', '/terminal', '/desafios'].some((h) => p.startsWith(h)) },
+  { label: 'Simulação', href: '/simulacao', icon: Gamepad2, match: (p) => p.startsWith('/simulacao') },
+];
+
+function BottomTabs({ pathname, onMenu, menuOpen }: { pathname: string; onMenu: () => void; menuOpen: boolean }) {
+  return (
+    <nav
+      aria-label="Navegação rápida"
+      className="pb-safe fixed inset-x-0 bottom-0 z-30 border-t border-border bg-background/95 backdrop-blur-xl xl:hidden"
+    >
+      <div className="mx-auto grid max-w-lg grid-cols-5">
+        {tabItems.map(({ label, href, icon: Icon, match }) => {
+          const active = !menuOpen && match(pathname);
+          return (
+            <Link
+              key={href}
+              href={href}
+              aria-current={active ? 'page' : undefined}
+              className={`flex h-16 flex-col items-center justify-center gap-1 text-[11px] font-medium transition-colors ${active ? 'text-blue-400' : 'text-slate-400 active:text-slate-200'}`}
+            >
+              <Icon className="h-5 w-5" />
+              {label}
+            </Link>
+          );
+        })}
+        <button
+          type="button"
+          onClick={onMenu}
+          aria-expanded={menuOpen}
+          className={`flex h-16 flex-col items-center justify-center gap-1 text-[11px] font-medium transition-colors ${menuOpen ? 'text-blue-400' : 'text-slate-400'}`}
+        >
+          <Menu className="h-5 w-5" />
+          Menu
+        </button>
+      </div>
+    </nav>
+  );
+}
+
 /** Item de menu mais específico que corresponde à rota (ex.: /labs/subnetting não ativa também /labs). */
 function findActiveHref(pathname: string) {
   if (pathname === '/') return '/';
@@ -165,7 +208,7 @@ export function SiteShell({ children }: { children: React.ReactNode }) {
       <div className="flex min-h-screen">
         {isOpen ? <div className="fixed inset-0 z-30 bg-black/60 backdrop-blur-sm xl:hidden" onClick={() => setOpen(false)} aria-hidden /> : null}
         <aside
-          className={`soft-scrollbar fixed inset-y-0 left-0 z-40 flex w-64 shrink-0 transform flex-col overflow-y-auto border-r border-border bg-[hsl(222_47%_3%)] ${
+          className={`soft-scrollbar pt-safe pb-safe fixed inset-y-0 left-0 z-40 flex w-[min(18rem,85vw)] shrink-0 transform flex-col overflow-y-auto overscroll-contain border-r border-border bg-[hsl(222_47%_3%)] xl:w-64 ${
             isOpen ? 'translate-x-0' : '-translate-x-full'
           } transition-transform duration-200 xl:sticky xl:top-0 xl:h-screen xl:translate-x-0`}
         >
@@ -187,7 +230,7 @@ export function SiteShell({ children }: { children: React.ReactNode }) {
                       <Link
                         key={href}
                         href={href}
-                        className={`group flex h-8 items-center gap-2.5 rounded-md px-2 text-sm transition-colors ${
+                        className={`group flex h-11 items-center gap-2.5 rounded-md px-2 text-[15px] transition-colors xl:h-8 xl:text-sm ${
                           active ? 'bg-muted font-medium text-white' : 'text-slate-400 hover:bg-muted/60 hover:text-slate-100'
                         }`}
                         aria-current={active ? 'page' : undefined}
@@ -212,9 +255,9 @@ export function SiteShell({ children }: { children: React.ReactNode }) {
         </aside>
 
         <div className="flex min-h-screen w-full min-w-0 flex-col">
-          <header className="sticky top-0 z-30 border-b border-border bg-background/80 backdrop-blur-xl">
+          <header className="pt-safe sticky top-0 z-30 border-b border-border bg-background/80 backdrop-blur-xl">
             <div className="mx-auto flex h-16 max-w-7xl items-center gap-3 px-4 sm:px-6 lg:px-8">
-              <button onClick={() => setOpen(true)} aria-label="Abrir menu" className={buttonVariants({ variant: 'outline', size: 'icon', className: 'xl:hidden' })}>
+              <button onClick={() => setOpen(true)} aria-label="Abrir menu" className={buttonVariants({ variant: 'outline', size: 'icon', className: 'hidden md:inline-flex xl:hidden' })}>
                 <Menu />
               </button>
 
@@ -241,9 +284,9 @@ export function SiteShell({ children }: { children: React.ReactNode }) {
             </div>
           </header>
 
-          <main className="mx-auto w-full max-w-7xl flex-1 px-4 py-8 sm:px-6 lg:px-8 lg:py-10">{children}</main>
+          <main className="mx-auto w-full max-w-7xl flex-1 px-4 py-6 sm:px-6 sm:py-8 lg:px-8 lg:py-10">{children}</main>
 
-          <footer className="border-t border-border">
+          <footer className="border-t border-border pb-[calc(4rem+env(safe-area-inset-bottom))] xl:pb-0">
             <div className="mx-auto flex max-w-7xl flex-col gap-2 px-4 py-6 text-xs text-slate-500 sm:flex-row sm:items-center sm:justify-between sm:px-6 lg:px-8">
               <span className="flex items-center gap-2">
                 <BrandMark size={18} />© {new Date().getFullYear()} NetLearn · Fundamentos de Redes
@@ -253,6 +296,7 @@ export function SiteShell({ children }: { children: React.ReactNode }) {
           </footer>
         </div>
       </div>
+      <BottomTabs pathname={pathname} menuOpen={isOpen} onMenu={() => setOpen((open) => !open)} />
     </div>
   );
 }
