@@ -11,9 +11,9 @@ export default function QuizzesPage() {
 
   return (
     <div className="space-y-8">
-      <section className="card-surface rounded-[28px] p-6 sm:p-8">
-        <div className="text-sm uppercase tracking-[0.2em] text-cyan-300">Quizzes</div>
-        <h1 className="mt-3 text-3xl font-bold text-white">Teste seu conhecimento em tempo real</h1>
+      <section className="card-surface rounded-xl p-6 sm:p-8">
+        <div className="text-xs font-medium uppercase tracking-[0.08em] text-blue-400">Quizzes</div>
+        <h1 className="mt-3 text-3xl font-semibold tracking-tight text-white">Teste seu conhecimento em tempo real</h1>
         <p className="mt-3 max-w-2xl text-slate-300">
           {total} questões com correção imediata e explicação. Sua melhor nota em cada módulo fica salva no seu progresso.
         </p>

@@ -188,23 +188,23 @@ export default function TerminalPage() {
 
   return (
     <div className="space-y-8">
-      <section className="card-surface rounded-[28px] p-6 sm:p-8">
-        <div className="text-sm uppercase tracking-[0.2em] text-cyan-300">Terminal educacional</div>
-        <h1 className="mt-3 text-3xl font-bold text-white">Laboratório de comandos de rede</h1>
+      <section className="card-surface rounded-xl p-6 sm:p-8">
+        <div className="text-xs font-medium uppercase tracking-[0.08em] text-blue-400">Terminal educacional</div>
+        <h1 className="mt-3 text-3xl font-semibold tracking-tight text-white">Laboratório de comandos de rede</h1>
         <p className="mt-3 max-w-2xl text-slate-300">Pratique ping, tracert, nslookup, arp, netstat, ipconfig e route. Cada saída vem acompanhada de uma explicação.</p>
       </section>
 
-      <div className="card-surface rounded-[28px] p-4 sm:p-6">
+      <div className="card-surface rounded-xl p-4 sm:p-6">
         <div
           ref={outputRef}
           role="log"
           aria-live="polite"
-          className="soft-scrollbar mb-4 h-[420px] overflow-y-auto rounded-2xl border border-slate-800 bg-slate-950/80 p-4 font-mono text-sm"
+          className="soft-scrollbar mb-4 h-[420px] overflow-y-auto rounded-xl border border-slate-800 bg-slate-950/80 p-4 font-mono text-sm"
         >
           {lines.map((line, index) => (
             <div
               key={index}
-              className={`whitespace-pre-wrap py-1 ${line.kind === 'input' ? 'text-cyan-300' : line.kind === 'note' ? 'font-sans text-amber-200' : 'text-slate-200'}`}
+              className={`whitespace-pre-wrap py-1 ${line.kind === 'input' ? 'text-blue-400' : line.kind === 'note' ? 'font-sans text-amber-200' : 'text-slate-200'}`}
             >
               {line.text}
             </div>
@@ -228,10 +228,10 @@ export default function TerminalPage() {
             onKeyDown={onKeyDown}
             autoComplete="off"
             spellCheck={false}
-            className="min-w-0 flex-1 rounded-xl border border-slate-700 bg-slate-900 px-3 py-3 font-mono text-sm text-white"
+            className="min-w-0 flex-1 rounded-lg border border-slate-700 bg-slate-900 px-3 py-3 font-mono text-sm text-white"
             placeholder="Digite: ping 8.8.8.8"
           />
-          <button type="submit" className="rounded-xl bg-gradient-to-r from-blue-500 to-cyan-400 px-5 py-3 font-semibold text-slate-950">
+          <button type="submit" className="rounded-lg bg-blue-600 hover:bg-blue-500 px-5 py-3 font-semibold text-white">
             Executar
           </button>
         </form>

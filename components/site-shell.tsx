@@ -2,46 +2,119 @@
 
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { useAccount } from './progress-store';
 import {
   BookOpen,
-  Briefcase,
   BrainCircuit,
-  ChevronRight,
+  ChartNoAxesColumn,
   Compass,
+  Gamepad2,
   Gauge,
+  Home,
   Layers3,
+  LibraryBig,
   LogIn,
   Menu,
   Network,
+  Route,
   Search,
-  ShieldCheck,
-  Sparkles,
   TerminalSquare,
   Trophy,
   UserCircle2,
   X,
 } from 'lucide-react';
+import { buttonVariants } from './ui/button';
+import { BrandLogo, BrandMark } from './brand-logo';
 
-const navItems = [
-  { label: 'Dashboard', href: '/dashboard', icon: Gauge },
-  { label: 'Aprender', href: '/aprender', icon: BookOpen },
-  { label: 'Trilha de Redes', href: '/trilha', icon: Compass },
-  { label: 'Laboratórios', href: '/labs', icon: Network },
-  { label: 'Subnetting Lab', href: '/labs/subnetting', icon: Layers3 },
-  { label: 'Packet Journey', href: '/labs/packet-journey', icon: Sparkles },
-  { label: 'Terminal', href: '/terminal', icon: TerminalSquare },
-  { label: 'Quizzes', href: '/quizzes', icon: BrainCircuit },
-  { label: 'Desafios', href: '/desafios', icon: Trophy },
-  { label: 'Progresso', href: '/progresso', icon: Briefcase },
-  { label: 'Glossário', href: '/glossario', icon: ShieldCheck },
-  { label: 'Perfil', href: '/perfil', icon: UserCircle2 },
+type NavItem = { label: string; href: string; icon: typeof Home };
+
+const navGroups: { title: string; items: NavItem[] }[] = [
+  {
+    title: 'Geral',
+    items: [
+      { label: 'Início', href: '/', icon: Home },
+      { label: 'Dashboard', href: '/dashboard', icon: Gauge },
+    ],
+  },
+  {
+    title: 'Estudar',
+    items: [
+      { label: 'Aprender', href: '/aprender', icon: BookOpen },
+      { label: 'Trilha de Redes', href: '/trilha', icon: Compass },
+      { label: 'Quizzes', href: '/quizzes', icon: BrainCircuit },
+      { label: 'Glossário', href: '/glossario', icon: LibraryBig },
+    ],
+  },
+  {
+    title: 'Praticar',
+    items: [
+      { label: 'Laboratórios', href: '/labs', icon: Network },
+      { label: 'Subnetting Lab', href: '/labs/subnetting', icon: Layers3 },
+      { label: 'Packet Journey', href: '/labs/packet-journey', icon: Route },
+      { label: 'Terminal', href: '/terminal', icon: TerminalSquare },
+      { label: 'Desafios', href: '/desafios', icon: Trophy },
+      { label: 'Simulação', href: '/simulacao', icon: Gamepad2 },
+    ],
+  },
+  {
+    title: 'Conta',
+    items: [
+      { label: 'Progresso', href: '/progresso', icon: ChartNoAxesColumn },
+      { label: 'Perfil', href: '/perfil', icon: UserCircle2 },
+    ],
+  },
 ];
+
+const navItems = navGroups.flatMap((group) => group.items);
+
+/** Abas da barra inferior no celular; o último botão abre o menu completo. */
+const tabItems: { label: string; href: string; icon: typeof Home; match: (path: string) => boolean }[] = [
+  { label: 'Início', href: '/', icon: Home, match: (p) => p === '/' || p === '/dashboard' },
+  { label: 'Aprender', href: '/aprender', icon: BookOpen, match: (p) => ['/aprender', '/aulas', '/trilha', '/quizzes', '/glossario'].some((h) => p.startsWith(h)) },
+  { label: 'Praticar', href: '/labs', icon: Network, match: (p) => ['/labs', '/terminal', '/desafios'].some((h) => p.startsWith(h)) },
+  { label: 'Simulação', href: '/simulacao', icon: Gamepad2, match: (p) => p.startsWith('/simulacao') },
+];
+
+function BottomTabs({ pathname, onMenu, menuOpen }: { pathname: string; onMenu: () => void; menuOpen: boolean }) {
+  return (
+    <nav
+      aria-label="Navegação rápida"
+      className="pb-safe fixed inset-x-0 bottom-0 z-30 border-t border-border bg-background/95 backdrop-blur-xl xl:hidden"
+    >
+      <div className="mx-auto grid max-w-lg grid-cols-5">
+        {tabItems.map(({ label, href, icon: Icon, match }) => {
+          const active = !menuOpen && match(pathname);
+          return (
+            <Link
+              key={href}
+              href={href}
+              aria-current={active ? 'page' : undefined}
+              className={`flex h-16 flex-col items-center justify-center gap-1 text-[11px] font-medium transition-colors ${active ? 'text-blue-400' : 'text-slate-400 active:text-slate-200'}`}
+            >
+              <Icon className="h-5 w-5" />
+              {label}
+            </Link>
+          );
+        })}
+        <button
+          type="button"
+          onClick={onMenu}
+          aria-expanded={menuOpen}
+          className={`flex h-16 flex-col items-center justify-center gap-1 text-[11px] font-medium transition-colors ${menuOpen ? 'text-blue-400' : 'text-slate-400'}`}
+        >
+          <Menu className="h-5 w-5" />
+          Menu
+        </button>
+      </div>
+    </nav>
+  );
+}
 
 /** Item de menu mais específico que corresponde à rota (ex.: /labs/subnetting não ativa também /labs). */
 function findActiveHref(pathname: string) {
-  const matches = navItems.filter(({ href }) => pathname === href || pathname.startsWith(`${href}/`));
+  if (pathname === '/') return '/';
+  const matches = navItems.filter(({ href }) => href !== '/' && (pathname === href || pathname.startsWith(`${href}/`)));
   if (matches.length === 0 && pathname.startsWith('/aulas/')) return '/aprender';
   return matches.sort((a, b) => b.href.length - a.href.length)[0]?.href ?? null;
 }
@@ -49,11 +122,25 @@ function findActiveHref(pathname: string) {
 function GlobalSearch({ className = '' }: { className?: string }) {
   const router = useRouter();
   const [query, setQuery] = useState('');
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  // Atalho Ctrl+K / ⌘K (ou "/") foca a busca.
+  useEffect(() => {
+    const onKey = (event: KeyboardEvent) => {
+      const typing = event.target instanceof HTMLElement && ['INPUT', 'TEXTAREA', 'SELECT'].includes(event.target.tagName);
+      if (((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === 'k') || (event.key === '/' && !typing)) {
+        event.preventDefault();
+        inputRef.current?.focus();
+      }
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, []);
 
   return (
     <form
       role="search"
-      className={`items-center gap-3 rounded-xl border border-slate-800 bg-slate-900/70 px-3 py-2 text-slate-400 focus-within:border-cyan-400/50 ${className}`}
+      className={`h-9 items-center gap-2 rounded-lg border border-border bg-card px-3 text-muted-foreground transition-colors focus-within:border-blue-500/60 hover:border-slate-600 ${className}`}
       onSubmit={(event) => {
         event.preventDefault();
         const q = query.trim();
@@ -62,13 +149,15 @@ function GlobalSearch({ className = '' }: { className?: string }) {
     >
       <Search className="h-4 w-4 shrink-0" />
       <input
+        ref={inputRef}
         type="search"
         value={query}
         onChange={(event) => setQuery(event.target.value)}
         aria-label="Busca global"
-        placeholder="Buscar aulas, termos e laboratórios"
-        className="w-full min-w-0 bg-transparent text-sm text-slate-200 placeholder:text-slate-500 focus:outline-none lg:w-80"
+        placeholder="Buscar aulas, termos e laboratórios…"
+        className="w-full min-w-0 bg-transparent text-sm text-slate-200 placeholder:text-slate-500 focus:outline-none lg:w-72"
       />
+      <kbd className="hidden shrink-0 rounded border border-border bg-muted px-1.5 py-0.5 text-[10px] font-medium text-slate-400 lg:inline">Ctrl K</kbd>
     </form>
   );
 }
@@ -76,11 +165,11 @@ function GlobalSearch({ className = '' }: { className?: string }) {
 /** Botão do topo: "Entrar" sem login, nome do aluno com login, "Perfil" quando o site roda sem banco. */
 function AccountButton() {
   const account = useAccount();
-  const className = 'flex items-center gap-2 rounded-xl border border-slate-700 bg-slate-900/80 px-3 py-2 text-sm';
+  const className = buttonVariants({ variant: 'outline', size: 'md' });
 
   if (account.status === 'anonymous') {
     return (
-      <Link href="/entrar" className={`${className} border-cyan-400/40 text-cyan-100 hover:border-cyan-300`}>
+      <Link href="/entrar" className={buttonVariants({ variant: 'primary', size: 'md' })}>
         <LogIn className="h-4 w-4" />
         <span className="hidden sm:inline">Entrar</span>
       </Link>
@@ -100,7 +189,8 @@ export function SiteShell({ children }: { children: React.ReactNode }) {
   const [isOpen, setOpen] = useState(false);
   const pathname = usePathname();
   const activeHref = useMemo(() => findActiveHref(pathname), [pathname]);
-  const currentLabel = navItems.find((nav) => nav.href === activeHref)?.label ?? 'NetLearn';
+  const activeGroup = navGroups.find((group) => group.items.some((item) => item.href === activeHref));
+  const currentLabel = navItems.find((nav) => nav.href === activeHref)?.label ?? (pathname.startsWith('/aulas/') ? 'Aula' : 'NetLearn');
 
   // Fecha o menu lateral ao navegar e com a tecla Esc.
   useEffect(() => setOpen(false), [pathname]);
@@ -114,81 +204,99 @@ export function SiteShell({ children }: { children: React.ReactNode }) {
   }, [isOpen]);
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100">
+    <div className="min-h-screen bg-background text-slate-100">
       <div className="flex min-h-screen">
-        {isOpen ? <div className="fixed inset-0 z-30 bg-slate-950/70 backdrop-blur-sm xl:hidden" onClick={() => setOpen(false)} aria-hidden /> : null}
+        {isOpen ? <div className="fixed inset-0 z-30 bg-black/60 backdrop-blur-sm xl:hidden" onClick={() => setOpen(false)} aria-hidden /> : null}
         <aside
-          className={`soft-scrollbar fixed inset-y-0 left-0 z-40 w-72 shrink-0 transform overflow-y-auto border-r border-slate-800 bg-slate-950/95 p-5 backdrop-blur ${
+          className={`soft-scrollbar pt-safe pb-safe fixed inset-y-0 left-0 z-40 flex w-[min(18rem,85vw)] shrink-0 transform flex-col overflow-y-auto overscroll-contain border-r border-border bg-[hsl(222_47%_3%)] xl:w-64 ${
             isOpen ? 'translate-x-0' : '-translate-x-full'
-          } transition xl:sticky xl:top-0 xl:h-screen xl:translate-x-0`}
+          } transition-transform duration-200 xl:sticky xl:top-0 xl:h-screen xl:translate-x-0`}
         >
-          <div className="mb-8 flex items-center justify-between gap-3">
-            <Link href="/" className="flex items-center gap-3">
-              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-blue-500 to-cyan-400 font-bold text-slate-950">
-                N
-              </div>
-              <div>
-                <div className="text-lg font-bold">NetLearn</div>
-                <div className="text-xs text-slate-400">Redes em prática</div>
-              </div>
-            </Link>
-            <button className="xl:hidden" onClick={() => setOpen(false)} aria-label="Fechar menu">
-              <X className="h-5 w-5" />
+          <div className="flex h-16 shrink-0 items-center justify-between gap-3 border-b border-border px-4">
+            <BrandLogo size={40} tagline />
+            <button className={buttonVariants({ variant: 'ghost', size: 'icon', className: 'xl:hidden' })} onClick={() => setOpen(false)} aria-label="Fechar menu">
+              <X />
             </button>
           </div>
 
-          <div className="mb-6 rounded-2xl border border-blue-500/20 bg-blue-500/10 p-3">
-            <div className="text-xs uppercase tracking-[0.2em] text-cyan-300">Trilha atual</div>
-            <div className="mt-2 text-sm font-medium text-slate-100">Fundamentos de Redes</div>
-          </div>
-
-          <nav className="space-y-1">
-            {navItems.map(({ label, href, icon: Icon }) => {
-              const active = href === activeHref;
-              return (
-                <Link
-                  key={href}
-                  href={href}
-                  className={`flex items-center justify-between rounded-xl px-3 py-2.5 text-sm transition ${
-                    active ? 'bg-blue-500/15 text-blue-200 ring-1 ring-blue-500/30' : 'text-slate-300 hover:bg-slate-900'
-                  }`}
-                  aria-current={active ? 'page' : undefined}
-                >
-                  <span className="flex items-center gap-3">
-                    <Icon className="h-4 w-4" />
-                    {label}
-                  </span>
-                  <ChevronRight className="h-4 w-4 opacity-60" />
-                </Link>
-              );
-            })}
+          <nav className="flex-1 space-y-6 px-3 py-5" aria-label="Navegação principal">
+            {navGroups.map((group) => (
+              <div key={group.title}>
+                <div className="mb-1.5 px-2 text-[11px] font-medium uppercase tracking-[0.08em] text-slate-500">{group.title}</div>
+                <div className="space-y-0.5">
+                  {group.items.map(({ label, href, icon: Icon }) => {
+                    const active = href === activeHref;
+                    return (
+                      <Link
+                        key={href}
+                        href={href}
+                        className={`group flex h-11 items-center gap-2.5 rounded-md px-2 text-[15px] transition-colors xl:h-8 xl:text-sm ${
+                          active ? 'bg-muted font-medium text-white' : 'text-slate-400 hover:bg-muted/60 hover:text-slate-100'
+                        }`}
+                        aria-current={active ? 'page' : undefined}
+                      >
+                        <Icon className={`h-4 w-4 ${active ? 'text-blue-400' : 'text-slate-500 group-hover:text-slate-300'}`} />
+                        {label}
+                      </Link>
+                    );
+                  })}
+                </div>
+              </div>
+            ))}
           </nav>
+
+          <div className="shrink-0 border-t border-border p-3">
+            <div className="rounded-lg border border-border bg-card p-3">
+              <div className="text-[11px] font-medium uppercase tracking-[0.08em] text-slate-500">Trilha atual</div>
+              <div className="mt-1 text-sm font-medium text-slate-100">Fundamentos de Redes</div>
+              <div className="mt-1 text-xs text-muted-foreground">20 módulos · gratuito</div>
+            </div>
+          </div>
         </aside>
 
         <div className="flex min-h-screen w-full min-w-0 flex-col">
-          <header className="sticky top-0 z-30 border-b border-slate-800/80 bg-slate-950/80 backdrop-blur-xl">
-            <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-4 sm:px-6 lg:px-8">
-              <div className="flex shrink-0 items-center gap-3 xl:hidden">
-                <button onClick={() => setOpen(true)} aria-label="Abrir menu" className="rounded-lg border border-slate-700 p-2">
-                  <Menu className="h-5 w-5" />
-                </button>
-                <div className="text-sm font-medium text-slate-300">{currentLabel}</div>
-              </div>
+          <header className="pt-safe sticky top-0 z-30 border-b border-border bg-background/80 backdrop-blur-xl">
+            <div className="mx-auto flex h-16 max-w-7xl items-center gap-3 px-4 sm:px-6 lg:px-8">
+              <button onClick={() => setOpen(true)} aria-label="Abrir menu" className={buttonVariants({ variant: 'outline', size: 'icon', className: 'hidden md:inline-flex xl:hidden' })}>
+                <Menu />
+              </button>
 
-              <GlobalSearch className="hidden flex-1 md:flex xl:flex-none" />
+              <Link href="/" aria-label="NetLearn — página inicial" className="xl:hidden">
+                <BrandMark size={30} />
+              </Link>
+              <nav aria-label="Você está em" className="flex min-w-0 items-center gap-2 text-sm">
+                {activeGroup && activeGroup.title !== 'Geral' ? (
+                  <>
+                    <span className="hidden text-slate-500 sm:inline">{activeGroup.title}</span>
+                    <span className="hidden text-slate-700 sm:inline">/</span>
+                  </>
+                ) : null}
+                <span className="truncate font-medium text-slate-200">{currentLabel}</span>
+              </nav>
 
-              <div className="ml-auto flex items-center gap-3">
-                <Link href="/busca" aria-label="Buscar" className="rounded-xl border border-slate-700 p-2 md:hidden">
-                  <Search className="h-5 w-5" />
+              <div className="ml-auto flex items-center gap-2">
+                <GlobalSearch className="hidden md:flex" />
+                <Link href="/busca" aria-label="Buscar" className={buttonVariants({ variant: 'outline', size: 'icon', className: 'md:hidden' })}>
+                  <Search />
                 </Link>
                 <AccountButton />
               </div>
             </div>
           </header>
 
-          <main className="mx-auto w-full max-w-7xl flex-1 px-4 py-8 sm:px-6 lg:px-8">{children}</main>
+          <main className="mx-auto w-full max-w-7xl flex-1 px-4 py-6 sm:px-6 sm:py-8 lg:px-8 lg:py-10">{children}</main>
+
+          <footer className="border-t border-border pb-[calc(4rem+env(safe-area-inset-bottom))] xl:pb-0">
+            <div className="mx-auto flex max-w-7xl flex-col gap-2 px-4 py-6 text-xs text-slate-500 sm:flex-row sm:items-center sm:justify-between sm:px-6 lg:px-8">
+              <span className="flex items-center gap-2">
+                <BrandMark size={18} />© {new Date().getFullYear()} NetLearn · Fundamentos de Redes
+              </span>
+              <span>Conteúdo gratuito e aberto para estudantes de TI.</span>
+            </div>
+          </footer>
         </div>
       </div>
+      <BottomTabs pathname={pathname} menuOpen={isOpen} onMenu={() => setOpen((open) => !open)} />
     </div>
   );
 }

@@ -15,7 +15,7 @@ export function QuizPicker({ modules }: { modules: QuizModule[] }) {
 
   return (
     <div className="grid grid-cols-1 gap-6 xl:grid-cols-[320px_1fr]">
-      <div className="card-surface h-fit rounded-[28px] p-4">
+      <div className="card-surface h-fit rounded-xl p-4">
         <label htmlFor="quiz-select" className="mb-2 block text-sm text-slate-300 xl:hidden">
           Escolha o módulo
         </label>
@@ -23,7 +23,7 @@ export function QuizPicker({ modules }: { modules: QuizModule[] }) {
           id="quiz-select"
           value={selected}
           onChange={(event) => setSelected(event.target.value)}
-          className="w-full rounded-xl border border-slate-700 bg-slate-900 px-3 py-3 text-white xl:hidden"
+          className="w-full rounded-lg border border-slate-700 bg-slate-900 px-3 py-3 text-white xl:hidden"
         >
           {modules.map((mod) => (
             <option key={mod.slug} value={mod.slug}>
@@ -42,7 +42,7 @@ export function QuizPicker({ modules }: { modules: QuizModule[] }) {
                   type="button"
                   onClick={() => setSelected(mod.slug)}
                   aria-current={active}
-                  className={`flex w-full items-center justify-between gap-2 rounded-xl px-3 py-2 text-left text-sm transition ${
+                  className={`flex w-full items-center justify-between gap-2 rounded-lg px-3 py-2 text-left text-sm transition ${
                     active ? 'bg-blue-500/15 text-blue-100 ring-1 ring-blue-500/30' : 'text-slate-300 hover:bg-slate-900'
                   }`}
                 >
@@ -62,10 +62,10 @@ export function QuizPicker({ modules }: { modules: QuizModule[] }) {
       </div>
 
       {current ? (
-        <div className="card-surface rounded-[28px] p-6">
+        <div className="card-surface rounded-xl p-6">
           <div className="mb-5 flex flex-wrap items-center justify-between gap-3">
-            <h2 className="text-2xl font-bold text-white">{current.title}</h2>
-            <Link href={`/aulas/${current.slug}`} className="text-sm text-cyan-300 hover:text-cyan-200">
+            <h2 className="text-2xl font-semibold tracking-tight text-white">{current.title}</h2>
+            <Link href={`/aulas/${current.slug}`} className="text-sm text-blue-400 hover:text-blue-300">
               Revisar o conteúdo →
             </Link>
           </div>

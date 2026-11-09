@@ -38,10 +38,10 @@ export function ModuleQuiz({ slug, questions }: { slug: string; questions: QuizI
         const isCorrect = chosen === quiz.answer;
 
         return (
-          <fieldset key={quiz.question} className="rounded-2xl border border-slate-800 bg-slate-950/60 p-5">
+          <fieldset key={quiz.question} className="rounded-xl border border-slate-800 bg-slate-950/60 p-5">
             <legend className="sr-only">Questão {index + 1}</legend>
             <div className="text-lg font-medium text-white">
-              <span className="mr-2 text-cyan-300">{index + 1}.</span>
+              <span className="mr-2 text-blue-400">{index + 1}.</span>
               {quiz.question}
             </div>
             <div className="mt-4 grid gap-3 sm:grid-cols-2">
@@ -60,7 +60,7 @@ export function ModuleQuiz({ slug, questions }: { slug: string; questions: QuizI
                     disabled={answered}
                     aria-pressed={isChosen}
                     onClick={() => setAnswers((prev) => ({ ...prev, [index]: option }))}
-                    className={`rounded-xl border px-4 py-3 text-left text-sm transition focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400 disabled:cursor-default ${tone}`}
+                    className={`rounded-lg border px-4 py-3 text-left text-sm transition focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400 disabled:cursor-default ${tone}`}
                   >
                     {option}
                   </button>
@@ -71,7 +71,7 @@ export function ModuleQuiz({ slug, questions }: { slug: string; questions: QuizI
             {answered ? (
               <div
                 role="status"
-                className={`mt-5 rounded-xl border p-3 text-sm ${
+                className={`mt-5 rounded-lg border p-3 text-sm ${
                   isCorrect ? 'border-emerald-500/30 bg-emerald-500/10 text-emerald-200' : 'border-rose-500/30 bg-rose-500/10 text-rose-200'
                 }`}
               >
@@ -87,10 +87,10 @@ export function ModuleQuiz({ slug, questions }: { slug: string; questions: QuizI
       })}
 
       {finished ? (
-        <div className="flex flex-col gap-4 rounded-2xl border border-cyan-500/30 bg-cyan-500/10 p-5 sm:flex-row sm:items-center sm:justify-between">
+        <div className="flex flex-col gap-4 rounded-xl border border-cyan-500/30 bg-cyan-500/10 p-5 sm:flex-row sm:items-center sm:justify-between">
           <div>
-            <div className="text-sm uppercase tracking-[0.2em] text-cyan-300">Resultado</div>
-            <div className="mt-1 text-2xl font-bold text-white">
+            <div className="text-xs font-medium uppercase tracking-[0.08em] text-blue-400">Resultado</div>
+            <div className="mt-1 text-2xl font-semibold tracking-tight text-white">
               {correctCount}/{questions.length} ({percent}%)
             </div>
             <div className="mt-1 text-sm text-slate-300">
@@ -100,7 +100,7 @@ export function ModuleQuiz({ slug, questions }: { slug: string; questions: QuizI
           <button
             type="button"
             onClick={() => setAnswers({})}
-            className="inline-flex items-center justify-center gap-2 rounded-xl border border-slate-600 bg-slate-900 px-4 py-2 text-sm font-semibold text-slate-100 hover:border-slate-400"
+            className="inline-flex items-center justify-center gap-2 rounded-lg border border-slate-600 bg-slate-900 px-4 py-2 text-sm font-semibold text-slate-100 hover:border-slate-400"
           >
             <RotateCcw className="h-4 w-4" />
             Refazer quiz

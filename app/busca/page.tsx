@@ -18,9 +18,9 @@ export default function BuscaPage({ searchParams }: { searchParams: { q?: string
 
   return (
     <div className="space-y-8">
-      <section className="card-surface rounded-[28px] p-6 sm:p-8">
-        <div className="text-sm uppercase tracking-[0.2em] text-cyan-300">Busca</div>
-        <h1 className="mt-3 text-3xl font-bold text-white">{query ? `Resultados para "${query}"` : 'Buscar no NetLearn'}</h1>
+      <section className="card-surface rounded-xl p-6 sm:p-8">
+        <div className="text-xs font-medium uppercase tracking-[0.08em] text-blue-400">Busca</div>
+        <h1 className="mt-3 text-3xl font-semibold tracking-tight text-white">{query ? `Resultados para "${query}"` : 'Buscar no NetLearn'}</h1>
         <form action="/busca" role="search" className="mt-5 flex gap-3">
           <label htmlFor="busca-q" className="sr-only">
             Termo de busca
@@ -31,9 +31,9 @@ export default function BuscaPage({ searchParams }: { searchParams: { q?: string
             type="search"
             defaultValue={query}
             placeholder="Ex.: DHCP, handshake, VLAN, 443…"
-            className="min-w-0 flex-1 rounded-xl border border-slate-700 bg-slate-900 px-4 py-3 text-white placeholder:text-slate-500"
+            className="min-w-0 flex-1 rounded-lg border border-slate-700 bg-slate-900 px-4 py-3 text-white placeholder:text-slate-500"
           />
-          <button type="submit" className="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-blue-500 to-cyan-400 px-5 py-3 font-semibold text-slate-950">
+          <button type="submit" className="inline-flex items-center gap-2 rounded-lg bg-blue-600 hover:bg-blue-500 px-5 py-3 font-semibold text-white">
             <Search className="h-4 w-4" />
             <span className="hidden sm:inline">Buscar</span>
           </button>
@@ -42,9 +42,9 @@ export default function BuscaPage({ searchParams }: { searchParams: { q?: string
       </section>
 
       {query && total === 0 ? (
-        <div className="card-surface rounded-[28px] p-6 text-slate-300">
+        <div className="card-surface rounded-xl p-6 text-slate-300">
           Nada encontrado. Tente um termo mais curto ou veja a{' '}
-          <Link href="/trilha" className="text-cyan-300 hover:text-cyan-200">
+          <Link href="/trilha" className="text-blue-400 hover:text-blue-300">
             trilha completa
           </Link>
           .
@@ -54,16 +54,16 @@ export default function BuscaPage({ searchParams }: { searchParams: { q?: string
       <ul className="space-y-4">
         {labResults.map((lab) => (
           <li key={lab.href}>
-            <Link href={lab.href} className="card-surface block rounded-[24px] p-5 transition hover:border-cyan-400/50">
-              <span className="text-xs uppercase tracking-[0.2em] text-violet-300">laboratório</span>
+            <Link href={lab.href} className="card-surface block rounded-xl p-5 transition hover:border-cyan-400/50">
+              <span className="text-xs font-medium uppercase tracking-[0.08em] text-violet-300">laboratório</span>
               <div className="mt-1 text-lg font-semibold text-white">{lab.title}</div>
             </Link>
           </li>
         ))}
         {results.map((result) => (
           <li key={`${result.type}-${result.href}`}>
-            <Link href={result.href} className="card-surface block rounded-[24px] p-5 transition hover:border-cyan-400/50">
-              <span className="text-xs uppercase tracking-[0.2em] text-cyan-300">{result.type}</span>
+            <Link href={result.href} className="card-surface block rounded-xl p-5 transition hover:border-cyan-400/50">
+              <span className="text-xs font-medium uppercase tracking-[0.08em] text-blue-400">{result.type}</span>
               <div className="mt-1 text-lg font-semibold text-white">{result.title}</div>
               <p className="mt-1 text-sm text-slate-400">{result.excerpt}</p>
             </Link>

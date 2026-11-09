@@ -20,8 +20,8 @@ export function ModuleProgressControls({ slug }: { slug: string }) {
         type="button"
         onClick={() => progressActions.toggleCompleted(slug)}
         aria-pressed={done}
-        className={`inline-flex items-center gap-2 rounded-xl px-4 py-2 text-sm font-semibold transition ${
-          done ? 'bg-emerald-500/15 text-emerald-200 ring-1 ring-emerald-500/40' : 'bg-gradient-to-r from-blue-500 to-cyan-400 text-slate-950'
+        className={`inline-flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-semibold transition ${
+          done ? 'bg-emerald-500/15 text-emerald-200 ring-1 ring-emerald-500/40' : 'bg-blue-600 hover:bg-blue-500 text-white'
         }`}
       >
         {done ? <CheckCircle2 className="h-4 w-4" /> : <Circle className="h-4 w-4" />}
