@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { ArrowRight, BrainCircuit, CheckCircle2, Clock3, Cloud, CloudOff, Flame, LogIn, LogOut, RotateCcw, Target, Trophy } from 'lucide-react';
+import { ArrowRight, BrainCircuit, CheckCircle2, Clock3, Cloud, CloudOff, Flame, LogIn, LogOut, UserCog, RotateCcw, Target, Trophy } from 'lucide-react';
 import { accountActions, computeStreak, progressActions, useAccount, useProgress, type ProgressState } from './progress-store';
 import { shortTitle, type TrailModule } from './trail-list';
 import { PageHeader } from './ui/card';
@@ -267,6 +267,15 @@ export function ProfileView({ modules }: { modules: Summary[] }) {
             <RotateCcw className="h-4 w-4" />
             Reiniciar progresso
           </button>
+          {loggedIn ? (
+            <a
+              href="#minha-conta"
+              className="inline-flex items-center gap-2 rounded-lg border border-slate-700 px-3 py-2 text-sm text-slate-300 hover:border-slate-500 hover:text-white"
+            >
+              <UserCog className="h-4 w-4" />
+              Editar conta
+            </a>
+          ) : null}
           {loggedIn ? (
             <button
               type="button"

@@ -1,5 +1,6 @@
 import { getModuleSummaries } from '@/lib/netlearn-db';
 import { ProfileView } from '@/components/progress-views';
+import { AccountSettings } from '@/components/account-settings';
 
 export default function PerfilPage() {
   return (
@@ -10,6 +11,7 @@ export default function PerfilPage() {
       </section>
 
       <ProfileView modules={getModuleSummaries()} />
+      <AccountSettings />
     </div>
   );
 }

@@ -75,6 +75,27 @@ export async function getCurrentUser(): Promise<AccountUser | null> {
 }
 
 // ---------------------------------------------------------------------------
+// Edição da conta
+
+/** Confere a senha atual de um usuário (usado antes de mudanças sensíveis). */
+export async function checkUserPassword(userId: string, password: unknown) {
+  if (typeof password !== 'string' || !password) return false;
+  const rows = await query<{ password_hash: string }>('SELECT password_hash FROM users WHERE id = $1', [userId]);
+  return rows[0] ? verifyPassword(password, rows[0].password_hash) : false;
+}
+
+/** Encerra as sessões do usuário em outros aparelhos, mantendo a atual. */
+export async function destroyOtherSessions(userId: string) {
+  const token = cookies().get(SESSION_COOKIE)?.value;
+  await query('DELETE FROM sessions WHERE user_id = $1 AND token_hash <> $2', [userId, token ? hashToken(token) : '']);
+}
+
+/** Apaga o cookie de sessão deste navegador. */
+export function clearSessionCookie() {
+  cookies().delete(SESSION_COOKIE);
+}
+
+// ---------------------------------------------------------------------------
 // Validação dos formulários
 
 export const normalizeEmail = (value: unknown) => (typeof value === 'string' ? value.trim().toLowerCase() : '');
