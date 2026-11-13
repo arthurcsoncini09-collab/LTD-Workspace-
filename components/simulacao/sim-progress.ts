@@ -2,6 +2,7 @@
 
 import { useSyncExternalStore } from 'react';
 import type { PlayerProfile } from '@/lib/simulacao/characters';
+import { GEAR, unlockedGear, type GearId, type GearSlot } from '@/lib/simulacao/rewards';
 
 // Resultado das fases do jogo e o personagem do jogador, salvos no navegador.
 // Guarda sempre a melhor pontuação de cada fase.
@@ -73,8 +74,20 @@ export const simActions = {
   setPlayer(player: PlayerProfile) {
     write({ ...read(), player: { ...player, name: player.name.trim().slice(0, 24) } });
   },
-  /** Recomeça a carreira, mas mantém o personagem criado. */
+  /** Veste no personagem um acessório já desbloqueado, ou tira o item daquela parte do corpo (id = null). */
+  equip(slot: GearSlot, id: GearId | null) {
+    const current = read();
+    if (id && (GEAR[id].slot !== slot || !unlockedGear(current.results).has(id))) return;
+    const player = current.player;
+    if (!player) return;
+    const gear = { ...player.look.gear };
+    if (id) gear[slot] = id;
+    else delete gear[slot];
+    write({ ...current, player: { ...player, look: { ...player.look, gear } } });
+  },
+  /** Recomeça a carreira, mas mantém o personagem criado (sem os itens, que voltam a ser bloqueados). */
   reset() {
-    write({ ...EMPTY, player: read().player });
+    const player = read().player;
+    write({ ...EMPTY, player: player ? { ...player, look: { ...player.look, gear: {} } } : undefined });
   },
 };

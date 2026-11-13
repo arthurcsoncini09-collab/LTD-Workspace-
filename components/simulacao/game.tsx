@@ -9,15 +9,19 @@ import {
   BookOpen,
   Briefcase,
   Cloud,
+  Gift,
   Headset,
   Lightbulb,
   Lock,
+  Map as MapIcon,
+  Medal,
   Network,
   Pencil,
   Play,
   RadioTower,
   RotateCcw,
   ShieldAlert,
+  Shirt,
   Sparkles,
   Star,
   Ticket,
@@ -30,6 +34,8 @@ import { Avatar, FaceAvatar, SpeechBubble } from './avatar';
 import { CastGallery, CharacterCreator } from './cast';
 import { ClassifyMechanic, ConfigMechanic, DiagnoseMechanic, FirewallMechanic, LogsMechanic, SequenceMechanic } from './mechanics';
 import { XP_PER_STAR, simActions, starsFor, useSimProgress, type SimProgress } from './sim-progress';
+import { AchievementsPanel, RewardsUnlocked, Wardrobe } from './rewards-ui';
+import { ALL_BADGES, GEAR, LEVEL_REWARDS, earnedBadgeIds, newRewards, unlockedGear } from '@/lib/simulacao/rewards';
 
 const AREA_ICON: Record<AreaId, typeof Headset> = {
   suporte: Headset,
@@ -112,7 +118,15 @@ function Hub({ progress, onOpen }: { progress: SimProgress; onOpen: (id: string)
   const player = progress.player;
   const [editing, setEditing] = useState(false);
   const [skipped, setSkipped] = useState(false);
+  const [tab, setTab] = useState<'fases' | 'badges' | 'guarda-roupa'>('fases');
   const showCreator = editing || (!player && !skipped && completed === 0);
+  const badgeCount = earnedBadgeIds(progress.results).size;
+  const gearCount = unlockedGear(progress.results).size;
+  const tabs = [
+    { id: 'fases' as const, label: 'Fases', icon: MapIcon, count: `${completed}/${LEVELS.length}` },
+    { id: 'badges' as const, label: 'Badges', icon: Medal, count: `${badgeCount}/${ALL_BADGES.length}` },
+    { id: 'guarda-roupa' as const, label: 'Guarda-roupa', icon: Shirt, count: `${gearCount}/${Object.keys(GEAR).length}` },
+  ];
 
   return (
     <div className="space-y-8">
@@ -195,7 +209,37 @@ function Hub({ progress, onOpen }: { progress: SimProgress; onOpen: (id: string)
         </div>
       </section>
 
-      {AREAS.map((area, areaNumber) => {
+      <div role="tablist" aria-label="Seções da simulação" className="flex gap-2 overflow-x-auto rounded-xl border border-slate-800 bg-slate-950/60 p-1.5">
+        {tabs.map(({ id, label, icon: Icon, count }) => (
+          <button
+            key={id}
+            type="button"
+            role="tab"
+            aria-selected={tab === id}
+            onClick={() => setTab(id)}
+            className={`inline-flex flex-1 items-center justify-center gap-2 whitespace-nowrap rounded-lg px-4 py-2.5 text-sm font-medium transition ${
+              tab === id ? 'bg-blue-600 text-white' : 'text-slate-300 hover:bg-slate-900 hover:text-white'
+            }`}
+          >
+            <Icon className="h-4 w-4" />
+            {label}
+            <span className={`rounded-full px-2 py-0.5 text-xs ${tab === id ? 'bg-white/20' : 'bg-slate-800 text-slate-400'}`}>{count}</span>
+          </button>
+        ))}
+      </div>
+
+      {tab === 'badges' ? <AchievementsPanel progress={progress} /> : null}
+      {tab === 'guarda-roupa' ? (
+        <Wardrobe
+          progress={progress}
+          onCreatePlayer={() => {
+            setEditing(true);
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+          }}
+        />
+      ) : null}
+
+      {tab === 'fases' ? AREAS.map((area, areaNumber) => {
         const Icon = AREA_ICON[area.id];
         const done = isAreaDone(area.id, progress);
         const firstIndex = levelIndex(areaLevels(area.id)[0].id);
@@ -276,6 +320,11 @@ function Hub({ progress, onOpen }: { progress: SimProgress; onOpen: (id: string)
                         <div className="truncate text-xs text-slate-500">{unlocked ? CHARACTERS[level.ticket.requester].name : 'Chamado bloqueado'}</div>
                       </div>
                     </div>
+                    <div className={`mt-3 inline-flex items-center gap-1.5 text-xs ${result ? 'text-emerald-200/80' : 'text-amber-200/80'}`}>
+                      <Gift className="h-3.5 w-3.5" />
+                      {result ? 'Conquistado: ' : 'Recompensa: '}
+                      {LEVEL_REWARDS[level.id].badge.name} + {GEAR[LEVEL_REWARDS[level.id].gear].name}
+                    </div>
                     <div className="mt-3 flex items-center justify-between text-xs">
                       {result ? (
                         <Stars count={result.stars} />
@@ -298,9 +347,9 @@ function Hub({ progress, onOpen }: { progress: SimProgress; onOpen: (id: string)
             </div>
           </section>
         );
-      })}
+      }) : null}
 
-      <CastGallery progress={progress} />
+      {tab === 'fases' ? <CastGallery progress={progress} /> : null}
 
       {completed > 0 ? (
         <div className="flex justify-end">
@@ -331,6 +380,7 @@ function LevelPlayer({ level, onExit, onOpen }: { level: Level; onExit: () => vo
   const [slips, setSlips] = useState(0);
   const [hintShown, setHintShown] = useState(false);
   const [solved, setSolved] = useState(false);
+  const [rewards, setRewards] = useState<ReturnType<typeof newRewards>>({ badges: [], gear: [] });
 
   const index = levelIndex(level.id);
   const area = AREAS.find((a) => a.id === level.area)!;
@@ -351,8 +401,12 @@ function LevelPlayer({ level, onExit, onOpen }: { level: Level; onExit: () => vo
     setSlips((n) => n + 1);
   };
   const onSolved = () => {
+    const earned = starsFor(mistakes);
+    const before = progress.results;
+    const best = Math.max(earned, before[level.id]?.stars ?? 0);
+    setRewards(newRewards(before, { ...before, [level.id]: { stars: best } }));
     setSolved(true);
-    simActions.complete(level.id, starsFor(mistakes));
+    simActions.complete(level.id, earned);
   };
 
   const restart = () => {
@@ -361,6 +415,7 @@ function LevelPlayer({ level, onExit, onOpen }: { level: Level; onExit: () => vo
     setSlips(0);
     setHintShown(false);
     setSolved(false);
+    setRewards({ badges: [], gear: [] });
     window.scrollTo({ top: 0 });
   };
 
@@ -518,6 +573,8 @@ function LevelPlayer({ level, onExit, onOpen }: { level: Level; onExit: () => vo
               </div>
             ) : null}
           </div>
+
+          <RewardsUnlocked badges={rewards.badges} gear={rewards.gear} progress={progress} />
 
           <div className="mt-6 space-y-3">
             <SpeechBubble character={thanksBy} tone="success">

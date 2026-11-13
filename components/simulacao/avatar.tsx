@@ -3,6 +3,7 @@
 import { useId } from 'react';
 import { Activity, Bug, ShieldAlert } from 'lucide-react';
 import type { AvatarLook, Character } from '@/lib/simulacao/characters';
+import { EyesArt, FaceArt, HeadArt, NeckArt, OutfitArt } from './gear-art';
 
 // Avatares desenhados em SVG a partir do "visual" de cada personagem.
 
@@ -11,7 +12,9 @@ const CAP = 'M19 27 C18 15 25 10.5 32 10.5 C40 10.5 46 15 45 27 C42 20.5 37 18.5
 export function FaceAvatar({ look, size = 48, title, dimmed = false }: { look: AvatarLook; size?: number; title?: string; dimmed?: boolean }) {
   const clip = useId();
   const { skin, hair, hairStyle, shirt, background, accessory } = look;
-  const glasses = accessory === 'oculos' || accessory === 'oculos-barba';
+  const gear = look.gear ?? {};
+  // Óculos conquistados substituem os óculos básicos.
+  const glasses = (accessory === 'oculos' || accessory === 'oculos-barba') && !gear.eyes;
   const beard = accessory === 'barba' || accessory === 'oculos-barba';
 
   return (
@@ -34,13 +37,14 @@ export function FaceAvatar({ look, size = 48, title, dimmed = false }: { look: A
 
         {/* Cabelo atrás da cabeça */}
         {hairStyle === 'longo' ? <path d="M17 28 C15 12 49 12 47 28 L49 52 C42 56 22 56 15 52Z" fill={hair} /> : null}
-        {hairStyle === 'coque' ? <circle cx="32" cy="9" r="7" fill={hair} /> : null}
+        {hairStyle === 'coque' && !gear.head ? <circle cx="32" cy="9" r="7" fill={hair} /> : null}
         {hairStyle === 'rabo' ? <path d="M43 20 C53 22 54 36 49 44 C48 36 46 30 42 26Z" fill={hair} /> : null}
         {hairStyle === 'cacheado' ? <ellipse cx="32" cy="24" rx="18" ry="15" fill={hair} /> : null}
 
         {/* Corpo */}
         <path d="M6 64 C6 50 17 44 32 44 C47 44 58 50 58 64Z" fill={shirt} />
         <path d="M26 44 L32 51 L38 44Z" fill="#000" opacity="0.15" />
+        {gear.outfit ? <OutfitArt id={gear.outfit} shirt={shirt} hasNeckItem={Boolean(gear.neck)} /> : null}
         <rect x="27" y="36" width="10" height="10" rx="3" fill={skin} />
         <rect x="27" y="36" width="10" height="4" fill="#000" opacity="0.08" />
 
@@ -92,6 +96,10 @@ export function FaceAvatar({ look, size = 48, title, dimmed = false }: { look: A
             <circle cx="26" cy="38.5" r="1.6" fill="#0f172a" />
           </g>
         ) : null}
+        {gear.face ? <FaceArt id={gear.face} hair={hair} /> : null}
+        {gear.eyes ? <EyesArt id={gear.eyes} /> : null}
+        {gear.neck ? <NeckArt id={gear.neck} /> : null}
+        {gear.head ? <HeadArt id={gear.head} /> : null}
         {accessory === 'brincos' ? (
           <g fill="#fbbf24">
             <circle cx="19" cy="33.5" r="1.6" />
