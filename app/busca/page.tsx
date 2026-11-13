@@ -6,7 +6,7 @@ const labs = [
   { title: 'Subnetting Lab', href: '/labs/subnetting', keywords: 'subnetting sub-rede máscara cidr calculadora broadcast' },
   { title: 'Packet Journey', href: '/labs/packet-journey', keywords: 'pacote viagem encapsulamento jornada' },
   { title: 'Network Simulator', href: '/labs/network-simulator', keywords: 'simulador ping gateway topologia' },
-  { title: 'Terminal Lab', href: '/terminal', keywords: 'terminal comandos ping tracert nslookup arp netstat ipconfig' },
+  { title: 'Terminal Lab', href: '/terminal', keywords: 'terminal comandos cmd powershell bash linux ping tracert traceroute nslookup dig arp netstat ss ipconfig ip curl' },
 ];
 
 export default function BuscaPage({ searchParams }: { searchParams: { q?: string } }) {

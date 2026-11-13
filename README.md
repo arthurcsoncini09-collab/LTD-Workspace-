@@ -61,6 +61,7 @@ O banco `db/netlearn.db` é gerado automaticamente na primeira requisição a pa
 - `lib/content/glossary.ts` — termos do glossário.
 - `lib/netlearn-db.ts` — banco SQLite (seed versionado, consultas e busca).
 - `lib/subnet.ts` e `lib/network-sim.ts` — lógica da calculadora de sub-redes e do simulador.
+- `lib/terminal/` e `components/terminal/` — Terminal Lab com três terminais simulados (CMD, PowerShell e Bash): rede virtual (`net.ts`), arquivos (`fs.ts`), pipes e redirecionamento (`core.ts`) e os comandos de cada shell (`cmd.ts`, `powershell.ts`, `bash.ts`). Para adicionar um comando, inclua-o no objeto `commands` do shell e, se quiser, no `catalog` (lista lateral).
 - `components/progress-store.ts` — progresso do aluno (módulos concluídos, notas, sequência): no navegador e, com login, sincronizado com o servidor.
 - `lib/postgres.ts` — conexão e schema do Postgres (contas, sessões, progresso).
 - `lib/auth.ts` e `app/api/auth/` — cadastro, login e sessão (senha com scrypt, cookie httpOnly).
