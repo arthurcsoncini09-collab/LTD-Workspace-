@@ -19,6 +19,7 @@ import { getModuleBySlug, getModuleSummaries } from '@/lib/netlearn-db';
 import { CodeBlock, LessonSectionCard } from '@/components/lesson-section-card';
 import { ModuleQuiz } from '@/components/module-quiz';
 import { ModuleProgressControls } from '@/components/module-progress-controls';
+import { CertificateCallout } from '@/components/certificates/certificate-views';
 
 type Props = { params: { id: string } };
 
@@ -94,6 +95,9 @@ export default function AulaPage({ params }: Props) {
         </div>
         <div className="mt-6">
           <ModuleProgressControls slug={mod.slug} />
+        </div>
+        <div className="mt-4">
+          <CertificateCallout slug={mod.slug} />
         </div>
       </section>
 

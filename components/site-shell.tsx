@@ -23,6 +23,7 @@ import {
   Trophy,
   UserCircle2,
   X,
+  FileBadge2,
 } from 'lucide-react';
 import { buttonVariants } from './ui/button';
 import { BrandLogo, BrandMark } from './brand-logo';
@@ -61,6 +62,7 @@ const navGroups: { title: string; items: NavItem[] }[] = [
     title: 'Conta',
     items: [
       { label: 'Progresso', href: '/progresso', icon: ChartNoAxesColumn },
+      { label: 'Certificados', href: '/certificados', icon: FileBadge2 },
       { label: 'Perfil', href: '/perfil', icon: UserCircle2 },
     ],
   },

@@ -159,3 +159,32 @@ a, button, [role='button'], label, summary {
     overflow-x: clip;
   }
 }
+
+/* Certificados: na tela a cópia de impressão fica escondida; ao imprimir, ela é a única coisa na página. */
+.cert-print-root {
+  display: none;
+}
+
+@media print {
+  @page {
+    size: A4 landscape;
+    margin: 0;
+  }
+  html,
+  body {
+    background: #fff !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+  body > *:not(.cert-print-root) {
+    display: none !important;
+  }
+  .cert-print-root {
+    display: block;
+    width: 297mm;
+    height: 210mm;
+    overflow: hidden;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+}
