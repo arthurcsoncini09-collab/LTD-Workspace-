@@ -19,7 +19,7 @@ const labs = [
   { title: 'Subnetting Lab', href: '/labs/subnetting', icon: Layers3, text: 'Calcule rede, broadcast e hosts com resolução passo a passo.' },
   { title: 'Packet Journey', href: '/labs/packet-journey', icon: Route, text: 'Acompanhe cada etapa da viagem de um pacote pela Internet.' },
   { title: 'Network Simulator', href: '/labs/network-simulator', icon: Network, text: 'Configure IP e gateway e descubra por que o ping falha.' },
-  { title: 'Terminal Lab', href: '/terminal', icon: TerminalSquare, text: 'Pratique ping, tracert, nslookup e arp com explicações.' },
+  { title: 'Terminal Lab', href: '/terminal', icon: TerminalSquare, text: 'CMD, PowerShell e Bash: comandos de rede com explicações.' },
 ];
 
 const stats = [

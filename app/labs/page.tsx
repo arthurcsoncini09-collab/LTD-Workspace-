@@ -5,7 +5,7 @@ const labs = [
   { title: 'Subnetting Lab', description: 'Calcule rede, host, broadcast e máscara com explicações passo a passo.', href: '/labs/subnetting', icon: Cpu },
   { title: 'Packet Journey', description: 'Veja a viagem de um pacote da camada de aplicação até a rede física.', href: '/labs/packet-journey', icon: Globe2 },
   { title: 'Network Simulator', description: 'Teste conexões, endereços e rotas em um mini laboratório visual.', href: '/labs/network-simulator', icon: Network },
-  { title: 'Terminal Lab', description: 'Simule comandos como ping, arp, nslookup e tracert de forma educativa.', href: '/terminal', icon: Wifi },
+  { title: 'Terminal Lab', description: 'Três terminais (CMD, PowerShell e Bash) para praticar ping, DNS, rotas, portas e arquivos.', href: '/terminal', icon: Wifi },
 ];
 
 export default function LabsPage() {

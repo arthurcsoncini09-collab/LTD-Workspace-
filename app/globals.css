@@ -188,3 +188,10 @@ a, button, [role='button'], label, summary {
     print-color-adjust: exact;
   }
 }
+
+/* O campo de digitação dos terminais não leva anel de foco: o cursor piscando já mostra onde se digita. */
+.terminal-input:focus,
+.terminal-input:focus-visible {
+  outline: none !important;
+  box-shadow: none !important;
+}
