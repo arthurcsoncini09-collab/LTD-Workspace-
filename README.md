@@ -66,6 +66,7 @@ O banco `db/netlearn.db` é gerado automaticamente na primeira requisição a pa
 - `lib/auth.ts` e `app/api/auth/` — cadastro, login e sessão (senha com scrypt, cookie httpOnly).
 - `lib/progress-db.ts` e `app/api/progress/` — leitura e gravação do progresso no Postgres.
 - `app/entrar/` — página de login e cadastro.
+- `components/account-settings.tsx` — "Minha conta" no Perfil: editar nome e e-mail, trocar a senha e excluir a conta.
 - `app/certificados/`, `components/certificates/` e `lib/certificates.ts` — certificado imprimível de cada módulo (módulo concluído + quiz com 70% ou mais) e da trilha completa; o layout de impressão A4 fica no fim de `app/globals.css`.
 - `app/simulacao/`, `components/simulacao/` e `lib/simulacao/` — jogo "Carreira em TI": 15 fases em 5 áreas (suporte, redes, segurança, cloud, NOC). Para criar uma fase, adicione um item em `LEVELS` (`lib/simulacao/levels.ts`).
 - `lib/simulacao/rewards.ts` e `components/simulacao/rewards-ui.tsx` — badges (um por fase, um por promoção e o "Lenda da TI") e acessórios do boneco desbloqueados em cada fase; desenhos em `components/simulacao/gear-art.tsx`.

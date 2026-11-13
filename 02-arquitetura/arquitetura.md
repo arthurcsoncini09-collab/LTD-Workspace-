@@ -32,6 +32,8 @@ e, quando ele entra na conta, é salvo num banco Postgres (Neon).
   (schema em `05-scripts-e-dados/banco/schema-postgres.sql`). São criadas na primeira requisição.
 - Senhas guardadas com scrypt + sal; o cookie de sessão é `httpOnly` e no banco fica só o hash do token.
 - API: `POST /api/auth/register`, `POST /api/auth/login`, `POST /api/auth/logout`, `GET /api/auth/me`,
+  `POST /api/auth/account` (nome e e-mail; trocar o e-mail pede a senha), `POST /api/auth/password` (pede a senha
+  atual e desconecta os outros aparelhos), `POST /api/auth/delete` (exclui a conta e o progresso, pede a senha),
   `GET /api/progress` e `POST /api/progress` (ações `complete`, `quiz`, `visit`, `reset`, `merge`).
 - Sincronização: a tela atualiza na hora; o servidor devolve o estado oficial. O progresso feito antes
   de entrar (ou que falhou por rede) é enviado com a ação `merge`, que soma sem apagar nada.

@@ -263,6 +263,29 @@ export const accountActions = {
     clearLocal();
     setAccount({ status: 'anonymous', user: null, syncError: false });
   },
+  /** Altera nome e e-mail. A senha atual só é exigida quando o e-mail muda. */
+  async updateProfile(name: string, email: string, currentPassword?: string) {
+    const result = await api<{ user: AccountUser }>('/api/auth/account', { name, email, currentPassword });
+    if (!result.ok) {
+      if (result.status === 401) setAccount({ status: 'anonymous', user: null, syncError: false });
+      return result.error;
+    }
+    setAccount({ ...account, user: result.data.user });
+    return null;
+  },
+  async changePassword(currentPassword: string, newPassword: string) {
+    const result = await api('/api/auth/password', { currentPassword, newPassword });
+    if (!result.ok && result.status === 401) setAccount({ status: 'anonymous', user: null, syncError: false });
+    return result.ok ? null : result.error;
+  },
+  /** Exclui a conta no servidor e limpa a cópia local do progresso. */
+  async deleteAccount(currentPassword: string) {
+    const result = await api('/api/auth/delete', { currentPassword });
+    if (!result.ok) return result.error;
+    clearLocal();
+    setAccount({ status: 'anonymous', user: null, syncError: false });
+    return null;
+  },
 };
 
 /** Dias consecutivos de estudo terminando hoje (ou ontem, para não zerar antes de estudar no dia). */
