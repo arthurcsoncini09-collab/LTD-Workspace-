@@ -1,6 +1,8 @@
 // Personagens do jogo "Carreira em TI": mentores de cada área, colegas que abrem
 // chamados e os sistemas automáticos que disparam alertas.
 
+import type { Outfit } from './rewards';
+
 export type HairStyle = 'curto' | 'longo' | 'coque' | 'cacheado' | 'raspado' | 'careca' | 'rabo';
 export type Accessory = 'nenhum' | 'oculos' | 'headset' | 'barba' | 'oculos-barba' | 'brincos';
 
@@ -11,6 +13,8 @@ export type AvatarLook = {
   shirt: string;
   background: string;
   accessory: Accessory;
+  /** Acessórios conquistados nas fases que o jogador está vestindo. */
+  gear?: Outfit;
 };
 
 export type CharacterId =
